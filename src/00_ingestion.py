@@ -1,15 +1,6 @@
 import os
 import json
-import requests
 import pandas as pd
-
-from dotenv import load_dotenv
-
-
-load_dotenv()
-
-DB_API_URL = os.getenv("DB_API_URL")
-DB_API_KEY = os.getenv("DB_API_KEY")
 
 
 REQUIRED_COLUMNS = [
@@ -75,50 +66,17 @@ def load_sample_json():
         return json.load(file)
 
 
-def fetch_from_api():
-
-    if not DB_API_URL:
-        raise ValueError("DB_API_URL is not configured")
-
-    if not DB_API_KEY:
-        raise ValueError("DB_API_KEY is not configured")
-
-    headers = {
-        "Authorization": f"Bearer {DB_API_KEY}",
-        "Accept": "application/json"
-    }
-
-    response = requests.get(
-        DB_API_URL,
-        headers=headers,
-        timeout=30
-    )
-
-    response.raise_for_status()
-
-    return response.json()
-
-
-def ingest(source="sample"):
-
-    if source == "sample":
-        records = load_sample_json()
-
-    elif source == "api":
-        records = fetch_from_api()
-
-    else:
-        raise ValueError(
-            "source must be either 'sample' or 'api'"
-        )
+def ingest_records(records):
 
     if not isinstance(records, list):
         raise ValueError(
-            "Expected JSON response to be an array of records"
+            "Expected records to be a list"
         )
 
     if not records:
-        raise ValueError("No material records found")
+        raise ValueError(
+            "No material records found"
+        )
 
     df = pd.DataFrame(records)
 
@@ -149,3 +107,16 @@ def ingest(source="sample"):
     df = df[REQUIRED_COLUMNS].copy()
 
     return df
+
+
+def ingest(source="sample"):
+
+    if source == "sample":
+        records = load_sample_json()
+
+    else:
+        raise ValueError(
+            "source must be 'sample'"
+        )
+
+    return ingest_records(records)

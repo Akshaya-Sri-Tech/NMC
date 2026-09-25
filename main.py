@@ -1,3 +1,4 @@
+
 import json
 import os
 import importlib.util
@@ -30,7 +31,7 @@ def load_module(filename):
     return module
 
 
-def main():
+def run_pipeline(records):
 
     # ============================================================
     # STEP 1: LOAD PIPELINE MODULES
@@ -45,35 +46,28 @@ def main():
 
 
     # ============================================================
-    # STEP 2: LOAD RAW JSON
+    # STEP 2: INGEST RECEIVED JSON
     # ============================================================
 
-    raw_records = ingestion.load_sample_json()
-
-
-    # ============================================================
-    # STEP 3: INGESTION
-    # ============================================================
-
-    df = ingestion.ingest(source="sample")
+    df = ingestion.ingest_records(records)
 
 
     # ============================================================
-    # STEP 4: CLEANING
+    # STEP 3: CLEANING
     # ============================================================
 
     df = cleaning.clean_dataframe(df)
 
 
     # ============================================================
-    # STEP 5: NORMALIZATION
+    # STEP 4: NORMALIZATION
     # ============================================================
 
     df = normalization.normalize_dataframe(df)
 
 
     # ============================================================
-    # STEP 6: ATTRIBUTE EXTRACTION + DQC
+    # STEP 5: ATTRIBUTE EXTRACTION + DQC
     # ============================================================
 
     final_json = []
@@ -119,7 +113,7 @@ def main():
         # RAW METADATA
         # --------------------------------------------------------
 
-        raw = raw_records[index]
+        raw = records[index]
 
 
         final_json.append({
@@ -155,7 +149,7 @@ def main():
 
 
     # ============================================================
-    # STEP 7: SPLINK MATCHING
+    # STEP 6: SPLINK MATCHING
     # ============================================================
 
     matching_results = matching.run_splink_pipeline(
@@ -164,18 +158,39 @@ def main():
 
 
     # ============================================================
-    # STEP 8: FINAL OUTPUT
+    # STEP 7: RETURN FINAL OUTPUT
     # ============================================================
 
-    if matching_results is not None:
+    if matching_results is None:
+        return []
 
-        print(
-            matching_results.to_json(
-                orient="records",
-                indent=2
-            )
+    return json.loads(
+        matching_results.to_json(
+            orient="records"
         )
+    )
+
+
+def main():
+
+    # ============================================================
+    # TEST THE PIPELINE USING SAMPLE DATA
+    # ============================================================
+
+    ingestion = load_module("00_ingestion.py")
+
+    raw_records = ingestion.load_sample_json()
+
+    result = run_pipeline(raw_records)
+
+    print(
+        json.dumps(
+            result,
+            indent=2
+        )
+    )
 
 
 if __name__ == "__main__":
     main()
+
