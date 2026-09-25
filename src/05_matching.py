@@ -17,16 +17,10 @@ import splink.comparison_level_library as cll
 # JSON
 #   -> attribute/value normalization
 #   -> DuckDB
-#   -> blocking
-#   -> attribute-level comparisons
+#   -> dynamic blocking & comparisons
 #   -> Splink match probability
 #   -> clustering
 #   -> NMC decision
-#
-# IMPORTANT:
-# DEMO_CALIBRATION=True is ONLY for this 5-record synthetic demo.
-# For production, use representative data + u estimation + EM or
-# labelled training. Do not copy the demo m/u values to production.
 # ============================================================
 
 
@@ -100,7 +94,10 @@ def normalize_extracted_attributes(raw_attributes):
         return {}
 
     if isinstance(raw_attributes, str):
-        raw_attributes = json.loads(raw_attributes)
+        try:
+            raw_attributes = json.loads(raw_attributes)
+        except Exception:
+            return {}
 
     if not isinstance(raw_attributes, dict):
         return {}
@@ -139,64 +136,56 @@ def run_splink_pipeline(final_json):
 
 
     # ============================================================
-    # STEP 3: FLATTEN JSON INTO SPLINK-READY RECORDS
+    # STEP 3: FLATTEN JSON INTO SPLINK-READY RECORDS (DYNAMIC ATTRIBUTES)
     # ============================================================
 
-    processed_records = []
+    # Extract all unique attribute keys across records dynamically
+    all_dynamic_keys = set()
+    preprocessed_records = []
 
     for record in raw_cpse_json_data:
-
         attrs = normalize_extracted_attributes(
             record.get("extracted_attributes", {})
         )
+        all_dynamic_keys.update(attrs.keys())
+        preprocessed_records.append((record, attrs))
 
-        product_type = attrs.get(
-            "product_type",
-            attrs.get("equipment_type")
-        )
+    dynamic_keys = sorted(list(all_dynamic_keys))
 
-        processed_records.append(
-            {
-                "unique_id": str(record["product_id"]),
-                "product_id": str(record["product_id"]),
-                "unspsc_code": str(record["unspsc_code"]).strip(),
-                "cpse_source": str(record["cpse_source"]).strip(),
+    processed_records = []
 
-                "product_type": product_type,
+    for record, attrs in preprocessed_records:
+        rec_dict = {
+            "unique_id": str(record["product_id"]),
+            "product_id": str(record["product_id"]),
+            "unspsc_code": str(record["unspsc_code"]).strip(),
+            "cpse_source": str(record["cpse_source"]).strip(),
 
-                # Material-defining attributes
-                "size": attrs.get("size"),
-                "body_material": attrs.get("body_material"),
-                "seat_material": attrs.get("seat_material"),
-                "flange_rating": attrs.get("flange_rating"),
-                "valve_type": attrs.get("valve_type"),
+            "material_description": (
+                str(record.get("material_description", ""))
+                .strip()
+                .lower()
+            ),
 
-                # Equipment-specific attributes
-                "capacity": attrs.get("capacity"),
-                "flow_rate": attrs.get("flow_rate"),
-                "head": attrs.get("head"),
+            "technical_description": (
+                str(record.get("technical_description", ""))
+                .strip()
+                .lower()
+            ),
 
-                "material_description": (
-                    str(record["material_description"])
-                    .strip()
-                    .lower()
-                ),
+            "canonical_kv_text": canonicalize_attributes(attrs),
 
-                "technical_description": (
-                    str(record["technical_description"])
-                    .strip()
-                    .lower()
-                ),
+            "raw_attributes_json": json.dumps(
+                attrs,
+                sort_keys=True
+            ),
+        }
 
-                "canonical_kv_text": canonicalize_attributes(attrs),
+        # Dynamically append extracted attribute keys
+        for key in dynamic_keys:
+            rec_dict[key] = attrs.get(key)
 
-                "raw_attributes_json": json.dumps(
-                    attrs,
-                    sort_keys=True
-                ),
-            }
-        )
-
+        processed_records.append(rec_dict)
 
     df_clean = pd.DataFrame(processed_records)
 
@@ -212,29 +201,7 @@ def run_splink_pipeline(final_json):
     con.execute(
         """
         CREATE TABLE cpse_materials AS
-        SELECT
-            unique_id,
-            product_id,
-            unspsc_code,
-            cpse_source,
-            product_type,
-
-            size,
-            body_material,
-            seat_material,
-            flange_rating,
-            valve_type,
-
-            capacity,
-            flow_rate,
-            head,
-
-            material_description,
-            technical_description,
-            canonical_kv_text,
-            raw_attributes_json
-
-        FROM df_raw_view;
+        SELECT * FROM df_raw_view;
         """
     )
 
@@ -253,11 +220,6 @@ def run_splink_pipeline(final_json):
         NULL = neutral evidence.
         Exact = strong positive evidence.
         Else = strong negative evidence.
-
-        This is important because many material attributes are
-        category-specific. For example, valves have seat_material,
-        while pumps do not. Missing pump/valve-specific attributes
-        must NOT be treated as evidence of a mismatch.
         """
 
         return cl.CustomComparison(
@@ -283,31 +245,16 @@ def run_splink_pipeline(final_json):
         )
 
 
-    # These are the actual material/equipment identity attributes.
-    ATTRIBUTE_COLUMNS = [
-        "product_type",
-        "size",
-        "body_material",
-        "seat_material",
-        "flange_rating",
-        "capacity",
-        "flow_rate",
-        "head",
-    ]
+    # Dynamic list of material/equipment identity attributes
+    ATTRIBUTE_COLUMNS = dynamic_keys
 
 
     if DEMO_CALIBRATION:
-
-        # Option B: compare UNSPSC + each extracted structured attribute directly.
-        # Descriptions remain in the raw data/output but do not affect Splink score.
         comparisons = [
             cl.ExactMatch("unspsc_code"),
             *[demo_exact_material_attribute(column) for column in ATTRIBUTE_COLUMNS],
         ]
-
     else:
-
-        # Production structure: UNSPSC + each extracted structured attribute.
         comparisons = [
             cl.ExactMatch("unspsc_code"),
             *[cl.ExactMatch(column) for column in ATTRIBUTE_COLUMNS],
@@ -318,46 +265,29 @@ def run_splink_pipeline(final_json):
     # STEP 6: SPLINK SETTINGS
     # ============================================================
 
-    settings = SettingsCreator(
+    blocking_rules = [block_on("unspsc_code")]
+    if "product_type" in dynamic_keys:
+        blocking_rules.append(block_on("unspsc_code", "product_type"))
 
+    additional_columns = [
+        "product_id",
+        "cpse_source",
+        "raw_attributes_json",
+    ] + dynamic_keys
+
+    settings = SettingsCreator(
         link_type="dedupe_only",
 
-        # Candidate generation.
-        #
-        # Keep both rules as requested.
-        #
-        # Note: the second rule is a stricter subset of the first,
-        # so UNSPSC-only already admits those candidates.
-        blocking_rules_to_generate_predictions=[
-            block_on("unspsc_code"),
-            block_on("unspsc_code", "product_type"),
-        ],
+        blocking_rules_to_generate_predictions=blocking_rules,
 
         comparisons=comparisons,
 
-        # Prototype prior only.
         probability_two_random_records_match=0.4,
 
         retain_matching_columns=True,
         retain_intermediate_calculation_columns=True,
 
-        additional_columns_to_retain=[
-            "product_id",
-            "cpse_source",
-            "product_type",
-
-            "size",
-            "body_material",
-            "seat_material",
-            "flange_rating",
-            "valve_type",
-
-            "capacity",
-            "flow_rate",
-            "head",
-
-            "raw_attributes_json",
-        ],
+        additional_columns_to_retain=additional_columns,
     )
 
 
@@ -385,7 +315,7 @@ def run_splink_pipeline(final_json):
     # STEP 9: CLUSTER HIGH-CONFIDENCE MATCHES
     # ============================================================
 
-    CLUSTER_THRESHOLD = 0.90
+    CLUSTER_THRESHOLD = 0.70
 
     df_clusters = (
         linker.clustering
@@ -410,7 +340,7 @@ def run_splink_pipeline(final_json):
 
 
     # ============================================================
-    # STEP 11: BUILD FINAL RESULT
+    # STEP 11: BUILD FINAL RESULT (UPDATED DECISION LOGIC)
     # ============================================================
 
     final_results = con.execute(
@@ -427,11 +357,12 @@ def run_splink_pipeline(final_json):
             END AS same_cluster,
 
             CASE
-                WHEN p.match_probability > 0.90
-                    THEN 'MATCH'
-                WHEN p.match_probability >= 0.50
-                    THEN 'HUMAN_VALIDATION'
-                ELSE 'NEW_NMC_CODE'
+                WHEN ROUND(p.match_probability, 4) >= 1.0000
+                    THEN 'NO NEW NMC CODE GENERATION'
+                WHEN ROUND(p.match_probability, 4) >= 0.7000
+                    AND ROUND(p.match_probability, 4) < 1.0000
+                        THEN 'HUMAN VALIDATION REQUIRED'
+                ELSE 'GENERATE NEW NMC'
             END AS prototype_decision,
 
             ROUND(p.match_probability, 4)
@@ -443,7 +374,6 @@ def run_splink_pipeline(final_json):
             l.product_id AS left_product_id,
             l.cpse_source AS left_cpse,
             l.unspsc_code AS left_unspsc,
-            l.product_type AS left_product_type,
             l.material_description AS left_material_desc,
             l.technical_description AS left_technical_desc,
             l.raw_attributes_json AS left_attributes,
@@ -451,7 +381,6 @@ def run_splink_pipeline(final_json):
             r.product_id AS right_product_id,
             r.cpse_source AS right_cpse,
             r.unspsc_code AS right_unspsc,
-            r.product_type AS right_product_type,
             r.material_description AS right_material_desc,
             r.technical_description AS right_technical_desc,
             r.raw_attributes_json AS right_attributes
