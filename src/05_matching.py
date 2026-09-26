@@ -468,5 +468,8 @@ def run_splink_pipeline(final_json):
     # STEP 13: VALIDATION OUTPUT
     # ============================================================
 
-    decision_layer.process_decisions(final_results)
-    return final_results
+    processed_results = decision_layer.process_decisions(
+    final_results
+)
+
+    return processed_results

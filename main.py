@@ -162,12 +162,20 @@ def main():
         final_json
     )
 
+    print(
+    json.dumps(
+        matching_results,
+        indent=4,
+        ensure_ascii=False
+    )
+)
+
 
    # ============================================================
 # STEP 8: FINAL OUTPUT
 # ============================================================
 
-print("Matching and decision layer completed.")
+    print("Matching and decision layer completed.")
 
 
 if __name__ == "__main__":

@@ -89,7 +89,7 @@
     },
     "connection_type:rf flanged": {
       "attribute": "connection_type",
-      "canonical": "rf flanged"
+      "canonical": "RF flanged"
     },
     "face_type:raised face": {
       "attribute": "face_type",
@@ -305,7 +305,7 @@
     },
     "formula:naoh": {
       "attribute": "formula",
-      "canonical": "NaOH"
+      "canonical": "naoh"
     },
     "purity:99%": {
       "attribute": "purity",
