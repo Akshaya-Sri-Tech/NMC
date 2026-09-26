@@ -450,6 +450,10 @@
     "dimensions:30 x 62 x 16 millimetre": {
       "attribute": "dimensions",
       "canonical": "30 x 62 x 16 millimetre"
+    },
+    "fluid:water": {
+      "attribute": "fluid",
+      "canonical": "water"
     }
   }
 }

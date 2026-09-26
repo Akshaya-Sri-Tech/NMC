@@ -163,18 +163,11 @@ def main():
     )
 
 
-    # ============================================================
-    # STEP 8: FINAL OUTPUT
-    # ============================================================
+   # ============================================================
+# STEP 8: FINAL OUTPUT
+# ============================================================
 
-    if matching_results is not None:
-
-        print(
-            matching_results.to_json(
-                orient="records",
-                indent=2
-            )
-        )
+print("Matching and decision layer completed.")
 
 
 if __name__ == "__main__":

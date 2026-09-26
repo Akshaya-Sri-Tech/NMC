@@ -8,6 +8,39 @@ from splink import Linker, DuckDBAPI, SettingsCreator, block_on
 import splink.comparison_library as cl
 import splink.comparison_level_library as cll
 
+import os
+import importlib.util
+
+CURRENT_DIR = os.path.dirname(
+    os.path.abspath(__file__)
+)
+
+def load_local_module(filename, module_name):
+    path = os.path.join(
+        CURRENT_DIR,
+        filename
+    )
+
+    spec = importlib.util.spec_from_file_location(
+        module_name,
+        path
+    )
+
+    if spec is None or spec.loader is None:
+        raise ImportError(
+            f"Could not load module: {filename}"
+        )
+
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    return module
+
+
+decision_layer = load_local_module(
+    "06_decision_layer.py",
+    "decision_layer"
+)
 
 # ============================================================
 # NMC MATERIAL MATCHING - SPLINK 4 + DUCKDB
@@ -215,36 +248,29 @@ def run_splink_pipeline(final_json):
 
     def demo_exact_material_attribute(column_name):
         """
-        Comparison for a material attribute with NULL penalization in Splink 4:
+        Comparison for a material attribute.
 
-        1. Exact Match -> High positive weight (m=0.97, u=0.05)
-        2. Null Level -> Moderate weight reduction penalty via CustomLevel (m=0.10, u=0.30)
-        3. Else Level -> Severe weight reduction penalty (m=0.03, u=0.95)
+        NULL = neutral evidence.
+        Exact = strong positive evidence.
+        Else = strong negative evidence.
         """
 
         return cl.CustomComparison(
             output_column_name=column_name,
-            comparison_description=f"Material attribute with Null penalty: {column_name}",
+            comparison_description=f"Material attribute: {column_name}",
             comparison_levels=[
+                cll.NullLevel(column_name),
+
                 cll.ExactMatchLevel(column_name).configure(
-                    m_probability=0.99,
+                    m_probability=0.97,
                     u_probability=0.05,
                     fix_m_probability=True,
                     fix_u_probability=True,
                 ),
 
-                cll.CustomLevel(
-                    sql_condition=f"{column_name}_l IS NULL OR {column_name}_r IS NULL"
-                ).configure(
-                    m_probability=0.20,
-                    u_probability=0.20,
-                    fix_m_probability=True,
-                    fix_u_probability=True,
-                ),
-
                 cll.ElseLevel().configure(
-                    m_probability=0.01,
-                    u_probability=0.99,
+                    m_probability=0.03,
+                    u_probability=0.95,
                     fix_m_probability=True,
                     fix_u_probability=True,
                 ),
@@ -433,39 +459,5 @@ def run_splink_pipeline(final_json):
     # STEP 13: VALIDATION OUTPUT
     # ============================================================
 
-    print("\n" + "=" * 70)
-    print("NMC SPLINK MATERIAL MATCHING")
-    print("=" * 70)
-
-    print(f"Input records       : {len(df_clean)}")
-    candidate_count = con.execute("SELECT COUNT(*) FROM splink_predictions").fetchone()[0]
-    print(f"Candidate pairs     : {candidate_count}")
-    print(f"Cluster threshold   : {CLUSTER_THRESHOLD}")
-    print(
-        "Mode                : "
-        + (
-            "5-record DEMO CALIBRATION"
-            if DEMO_CALIBRATION
-            else "PRODUCTION MODEL"
-        )
-    )
-
-    print("\n===== SPLINK MATCH RESULTS =====\n")
-
-    print(
-        final_results[
-            [
-                "cluster_id_left",
-                "cluster_id_right",
-                "same_cluster",
-                "prototype_decision",
-                "left_product_id",
-                "right_product_id",
-                "splink_score",
-                "splink_match_weight",
-            ]
-        ].to_string(index=False)
-    )
-
-    print(f"\nSuccessfully exported: {output_file}")
+    decision_layer.process_decisions(final_results)
     return final_results
