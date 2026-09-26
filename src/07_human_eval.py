@@ -418,7 +418,14 @@ RIGHT RECORD:
     # Save human evaluation
     # --------------------------------------------------------
 
-    output_file = (
+    registries_dir = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "registries"
+    )
+    os.makedirs(registries_dir, exist_ok=True)
+
+    output_file = os.path.join(
+        registries_dir,
         "human_evaluation_results.json"
     )
 

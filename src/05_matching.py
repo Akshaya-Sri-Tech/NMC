@@ -446,7 +446,16 @@ def run_splink_pipeline(final_json):
     # STEP 12: EXPORT
     # ============================================================
 
-    output_file = "harmonized_material_clusters.json"
+    registries_dir = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "registries"
+    )
+    os.makedirs(registries_dir, exist_ok=True)
+
+    output_file = os.path.join(
+        registries_dir,
+        "harmonized_material_clusters.json"
+    )
 
     final_results.to_json(
         output_file,
