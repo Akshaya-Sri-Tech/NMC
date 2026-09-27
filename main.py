@@ -174,7 +174,7 @@ def run_pipeline(records):
 def main():
 
     # ============================================================
-    # TEST THE PIPELINE USING SAMPLE DATA
+    # LOCAL TEST ONLY
     # ============================================================
 
     ingestion = load_module("00_ingestion.py")
@@ -193,6 +193,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
 

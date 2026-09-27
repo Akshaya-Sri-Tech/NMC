@@ -1,8 +1,11 @@
 import json
 import os
-import time
+import requests
 from groq import Groq
+from dotenv import load_dotenv
 
+load_dotenv()
+BACKEND_URL = "http://127.0.0.1:8000"
 
 # ============================================================
 # GROQ CLIENT
@@ -714,123 +717,45 @@ RECORD B
         ),
     }
 
-    # --------------------------------------------------------
-    # Display human evaluation
-    # --------------------------------------------------------
-
-    print(
-        "\n========== HUMAN EVALUATION ==========\n"
-    )
-
-    print(
-        json.dumps(
-            evaluation_output,
-            indent=4,
-            ensure_ascii=False
-        )
-    )
-
-    # --------------------------------------------------------
-    # Human decision
-    # --------------------------------------------------------
-
-    print(
-        "\n>>> WAITING FOR HUMAN INPUT <<<",
-        flush=True
-    )
-
-    while True:
-
-        human_decision = input(
-            "\nEnter decision "
-            "(MATCH / NOT A MATCH): "
-        ).strip().upper()
-
-        if human_decision in {
-            "MATCH",
-            "NOT A MATCH"
-        }:
-            break
-
-        print(
-            "Please enter MATCH or NOT A MATCH."
-        )
-
-    # --------------------------------------------------------
-    # Store human evaluation
-    # --------------------------------------------------------
-
-    result["human_evaluation"] = {
-
-        "similarities": analysis.get(
-            "similarities",
-            []
-        ),
-
-        "differences": analysis.get(
-            "differences",
-            []
-        ),
-    }
-
-    result["human_decision"] = (
-        human_decision
-    )
-
-    # --------------------------------------------------------
-    # Route based on human decision
-    # --------------------------------------------------------
-
-    if human_decision == "MATCH":
-
-        result["prototype_decision"] = (
-            "NO NEW NMC CODE GENERATION"
-        )
-
-    else:
-
-        result["prototype_decision"] = (
-            "GENERATE NEW NMC"
-        )
-
-    # --------------------------------------------------------
-    # Add decision to JSON output
-    # --------------------------------------------------------
-
-    evaluation_output["human_decision"] = (
-        human_decision
-    )
-
-    evaluation_output["prototype_decision"] = (
-        result["prototype_decision"]
-    )
-
-    # --------------------------------------------------------
-    # Save human evaluation
-    # --------------------------------------------------------
-
-    registries_dir = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-        "registries"
-    )
-    os.makedirs(registries_dir, exist_ok=True)
-
-    output_file = os.path.join(
-        registries_dir,
-        "human_evaluation_results.json"
-    )
-
-    file_path = "registries/human_evaluation_results.json"
+# --------------------------------------------------------
+# SEND EVALUATION TO BACKEND
+# --------------------------------------------------------
 
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            results = json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-            results = []
 
-    results.append(result)
- 
-    with open(file_path, "w", encoding="utf-8") as f:
-        json.dump(results, f, indent=4, ensure_ascii=False)
+        response = requests.post(
+            f"{BACKEND_URL}/api/human-evaluations",
+            json=evaluation_output,
+            timeout=10
+        )
 
-    return result
+        response.raise_for_status()
+
+        backend_result = response.json()
+
+        print(
+            "\n>>> HUMAN EVALUATION SENT TO BACKEND <<<",
+            flush=True
+        )
+
+        print(
+            json.dumps(
+                backend_result,
+                indent=4
+            )
+        )
+
+    except requests.RequestException as error:
+
+        print(
+            "\n========== BACKEND ERROR =========="
+        )
+
+        print(error)
+
+        print(
+            "===================================\n"
+        )
+
+        raise
+    return backend_result

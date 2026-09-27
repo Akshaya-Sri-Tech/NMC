@@ -454,6 +454,46 @@
     "fluid:water": {
       "attribute": "fluid",
       "canonical": "water"
+    },
+    "class:300#": {
+      "attribute": "class",
+      "canonical": "300#"
+    },
+    "ball_material:stainless steel 304": {
+      "attribute": "ball_material",
+      "canonical": "stainless steel 304"
+    },
+    "end_type:flanged rf": {
+      "attribute": "end_type",
+      "canonical": "flanged rf"
+    },
+    "thread_type:metric": {
+      "attribute": "thread_type",
+      "canonical": "metric"
+    },
+    "grade:a106b": {
+      "attribute": "grade",
+      "canonical": "A106B"
+    },
+    "size:100 millimetre nb": {
+      "attribute": "size",
+      "canonical": "100 millimetre nb"
+    },
+    "material:astm a106 grade b": {
+      "attribute": "material",
+      "canonical": "ASTM A106 Grade B"
+    },
+    "construction:seamless": {
+      "attribute": "construction",
+      "canonical": "seamless"
+    },
+    "face_style:rf": {
+      "attribute": "face_style",
+      "canonical": "rf"
+    },
+    "standard:asme": {
+      "attribute": "standard",
+      "canonical": "asme"
     }
   }
 }
