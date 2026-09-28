@@ -5,6 +5,8 @@ from database.connection import supabase
 from routes.aiml import router as aiml_router
 from routes.ingestion import router as ingestion_router
 from routes.human_evaluation import router as human_evaluation_router
+from routes.nmc import router as nmc_router
+
 
 app = FastAPI()
 
@@ -36,3 +38,4 @@ def test_db():
 app.include_router(ingestion_router)
 app.include_router(aiml_router)
 app.include_router(human_evaluation_router)
+app.include_router(nmc_router)

@@ -1,9 +1,16 @@
+
 import os
+
 import re
+
 import json
+
+import requests
+
 from typing import Any, Dict, Optional
 
 from dotenv import load_dotenv
+
 from supabase import create_client, Client
 
 
@@ -14,12 +21,19 @@ from supabase import create_client, Client
 load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
+
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 # Your current Supabase table
 SUPABASE_TABLE = os.getenv(
     "SUPABASE_STANDARD_MATERIAL_TABLE",
     "standard_material"
+)
+
+# FastAPI backend URL
+BACKEND_URL = os.getenv(
+    "BACKEND_URL",
+    "http://127.0.0.1:8000"
 )
 
 
@@ -93,6 +107,7 @@ def get_supabase_client() -> Client:
 #
 # pair 2 therefore receives NMC-VAL-003.
 #
+
 _NMC_CODE_STATE: Dict[str, int] = {}
 
 
@@ -115,6 +130,7 @@ def normalize_text(value: Any) -> str:
     value = str(value).strip().lower()
 
     # Common terminology normalization
+
     value = value.replace(
         "stainless steel",
         "ss"
@@ -131,6 +147,7 @@ def normalize_text(value: Any) -> str:
     )
 
     # Normalize whitespace
+
     value = re.sub(
         r"\s+",
         " ",
@@ -138,13 +155,15 @@ def normalize_text(value: Any) -> str:
     )
 
     # Normalize punctuation
+
     value = re.sub(
-        r"[,\.;]+",
+        r"[,.;]+",
         " ",
         value
     )
 
     # Normalize whitespace again
+
     value = re.sub(
         r"\s+",
         " ",
@@ -179,6 +198,7 @@ def parse_attributes(
     if isinstance(value, str):
 
         try:
+
             parsed = json.loads(value)
 
             if isinstance(parsed, dict):
@@ -219,7 +239,6 @@ def categorize_material(
     Determine category, subcategory and material group.
 
     This is currently rule based.
-
     It can later be replaced with the project's
     standard classification system.
     """
@@ -320,13 +339,11 @@ def categorize_material(
 
     return {
         "category": "Other",
-
         "subcategory": (
             product_type.title()
             if product_type
             else "Unclassified"
         ),
-
         "material_group": "Mechanical"
     }
 
@@ -342,7 +359,6 @@ def get_nmc_prefix(
     Convert material category into NMC prefix.
 
     Example:
-
         Valves -> VAL
         Pumps -> PMP
         Fasteners -> FST
@@ -432,7 +448,6 @@ def find_existing_nmc(
     exists in Supabase.
 
     Current prototype matching logic:
-
         1. standardized_description
         2. standardized_specification
         3. category
@@ -461,17 +476,7 @@ def find_existing_nmc(
     # --------------------------------------------------------
     # Fetch candidate records by category/subcategory
     # --------------------------------------------------------
-    #
-    # We do the final comparison in Python because:
-    #
-    # "2 Inch SS304 Ball Valve"
-    #
-    # and
-    #
-    # "2 inch ss304 ball valve"
-    #
-    # should be treated as equivalent.
-    #
+
     response = (
         client
         .table(SUPABASE_TABLE)
@@ -524,13 +529,6 @@ def find_existing_nmc(
         # ----------------------------------------------------
         # Specification handling
         # ----------------------------------------------------
-        #
-        # If both records have specifications,
-        # require them to match.
-        #
-        # If one side has no specification, description
-        # matching can still identify the existing material.
-        # ----------------------------------------------------
 
         if (
             specification
@@ -555,13 +553,14 @@ def get_next_nmc_number(
     Find the next unused number for a prefix from Supabase.
 
     Example:
-
         existing:
+
             NMC-VAL-001
             NMC-VAL-002
             NMC-VAL-007
 
         returns:
+
             8
     """
 
@@ -625,11 +624,9 @@ def generate_nmc_code(
     process.
 
     The first request for a prefix checks Supabase.
-
     Subsequent requests use the locally reserved number.
 
     This prevents:
-
         material A -> NMC-VAL-001
         material B -> NMC-VAL-001
 
@@ -657,6 +654,7 @@ def generate_nmc_code(
     ]
 
     # Immediately reserve the next number.
+
     _NMC_CODE_STATE[
         prefix
     ] = number + 1
@@ -692,6 +690,7 @@ def infer_uom(
         or "nut" in product_type
         or "screw" in product_type
     ):
+
         return "NOS"
 
     return "NOS"
@@ -902,7 +901,9 @@ def process_material(
     if existing:
 
         return build_duplicate_result(
+
             material_id=material_id,
+
             existing=existing
         )
 
@@ -929,6 +930,43 @@ def process_material(
 
 
 # ============================================================
+# SEND RESULT TO FASTAPI BACKEND
+# ============================================================
+
+def send_result_to_backend(
+    result: Dict[str, Any]
+) -> Dict[str, Any]:
+    """
+    Send the generated NMC result to the FastAPI backend.
+
+    The backend is responsible for:
+        - validating the result
+        - resolving material UUIDs
+        - creating/updating standard_material
+        - creating material_mapping
+        - setting mapping status
+        - database persistence
+
+    This AIML code does not write the result to Supabase.
+    """
+
+    endpoint = (
+        f"{BACKEND_URL.rstrip('/')}"
+        "/api/nmc/results"
+    )
+
+    response = requests.post(
+        endpoint,
+        json=result,
+        timeout=30
+    )
+
+    response.raise_for_status()
+
+    return response.json()
+
+
+# ============================================================
 # PROCESS SPLINK PAIR
 # ============================================================
 
@@ -945,12 +983,10 @@ def run(
             "left_material_desc": ...,
             "left_technical_desc": ...,
             "left_attributes": ...,
-
             "right_product_id": ...,
             "right_material_desc": ...,
             "right_technical_desc": ...,
             "right_attributes": ...,
-
             "splink_score": ...,
             "prototype_decision": ...
         }
@@ -1061,8 +1097,15 @@ def run(
             left_result,
 
             right_result
-
         ]
     }
 
-    return output
+    # ========================================================
+    # SEND TO BACKEND
+    # ========================================================
+
+    backend_result = send_result_to_backend(
+        output
+    )
+
+    return backend_result
