@@ -44,13 +44,11 @@ def run_pipeline(records):
     dqc = load_module("04_data_quality.py")
     matching = load_module("05_matching.py")
 
-
     # ============================================================
     # STEP 2: INGEST RECEIVED JSON
     # ============================================================
 
     df = ingestion.ingest_records(records)
-
 
     # ============================================================
     # STEP 3: CLEANING
@@ -58,13 +56,11 @@ def run_pipeline(records):
 
     df = cleaning.clean_dataframe(df)
 
-
     # ============================================================
     # STEP 4: NORMALIZATION
     # ============================================================
 
     df = normalization.normalize_dataframe(df)
-
 
     # ============================================================
     # STEP 5: ATTRIBUTE EXTRACTION + DQC
@@ -89,7 +85,6 @@ def run_pipeline(records):
             f"{normalized_specification}"
         ).strip()
 
-
         # --------------------------------------------------------
         # ATTRIBUTE EXTRACTION
         # --------------------------------------------------------
@@ -97,7 +92,6 @@ def run_pipeline(records):
         extracted_attributes = extraction.extract(
             extraction_text
         )
-
 
         # --------------------------------------------------------
         # DATA QUALITY CORRECTION
@@ -108,13 +102,11 @@ def run_pipeline(records):
             normalized_specification
         )
 
-
         # --------------------------------------------------------
         # RAW METADATA
         # --------------------------------------------------------
 
         raw = records[index]
-
 
         final_json.append({
 
@@ -147,7 +139,6 @@ def run_pipeline(records):
 
         })
 
-
     # ============================================================
     # STEP 6: SPLINK MATCHING
     # ============================================================
@@ -156,6 +147,13 @@ def run_pipeline(records):
         final_json
     )
 
+    print(
+        json.dumps(
+            matching_results,
+            indent=4,
+            ensure_ascii=False
+        )
+    )
 
     # ============================================================
     # STEP 7: RETURN FINAL OUTPUT
@@ -189,8 +187,8 @@ def main():
             indent=2
         )
     )
+    print("Matching and decision layer completed.")
 
 
 if __name__ == "__main__":
     main()
-
