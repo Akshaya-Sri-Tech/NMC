@@ -1,4 +1,3 @@
-
 import json
 import os
 import importlib.util
@@ -24,7 +23,9 @@ def load_module(filename):
             f"Could not load module: {filename}"
         )
 
-    module = importlib.util.module_from_spec(spec)
+    module = importlib.util.module_from_spec(
+        spec
+    )
 
     spec.loader.exec_module(module)
 
@@ -162,11 +163,7 @@ def run_pipeline(records):
     if matching_results is None:
         return []
 
-    return json.loads(
-        matching_results.to_json(
-            orient="records"
-        )
-    )
+    return matching_results
 
 
 def main():
@@ -187,6 +184,7 @@ def main():
             indent=2
         )
     )
+
     print("Matching and decision layer completed.")
 
 

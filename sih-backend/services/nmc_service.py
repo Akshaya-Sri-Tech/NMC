@@ -3,12 +3,16 @@ from database.connection import supabase
 
 def resolve_material_uuid(pipeline_material_id: str):
     """
-    Convert the NMC pipeline material ID into the actual
-    material_master UUID.
+    Resolve the supplied material_id directly against
+    the material_master UUID.
 
     IMPORTANT:
-    We do not assume that pipeline IDs such as a012
-    are database UUIDs.
+
+    The NMC pipeline communicates using the actual
+    material_id UUID.
+
+    We do not use legacy_sap_material_number for
+    communication between AIML and the backend.
     """
 
     response = (
@@ -16,7 +20,7 @@ def resolve_material_uuid(pipeline_material_id: str):
         .table("material_master")
         .select("material_id")
         .eq(
-            "legacy_sap_material_number",
+            "material_id",
             pipeline_material_id
         )
         .limit(1)
@@ -47,8 +51,8 @@ def save_nmc_result(data):
 
     if not material_uuid:
         raise ValueError(
-            f"Could not resolve pipeline material "
-            f"'{material_id}' to material_master UUID."
+            f"Could not resolve material_id "
+            f"'{material_id}' in material_master."
         )
 
     # --------------------------------------------------
@@ -199,7 +203,10 @@ def save_nmc_result(data):
         "mapping":
             mapping_rows[0] if mapping_rows else None
     }
+
+
 def update_standardized_description(data):
+
     response = (
         supabase
         .table("standard_material")

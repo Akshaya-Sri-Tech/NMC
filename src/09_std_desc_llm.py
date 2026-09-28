@@ -95,13 +95,7 @@ def get_groq() -> Groq:
 # CACHES
 # ============================================================
 
-# pipeline product_id -> pipeline record
-_pipeline_cache: Dict[str, Dict[str, Any]] = {}
-
-# pipeline product_id -> resolved UUID, if one is actually known
-_product_uuid_cache: Dict[str, Optional[str]] = {}
-
-# UUID -> approved mapping information
+# material UUID -> approved mapping information
 _mapping_cache: Dict[str, Optional[Dict[str, Any]]] = {}
 
 # standard_material_id -> list of material UUIDs
@@ -177,108 +171,7 @@ def supabase_call(
 
 
 # ============================================================
-# PIPELINE INPUT
-# ============================================================
-
-def find_pipeline_file() -> Optional[str]:
-    """
-    We use the existing pipeline input only to understand what
-    product IDs such as a012 represent.
-
-    This avoids changing matching.py.
-    """
-
-    possible_paths = [
-        os.path.join(
-            os.path.dirname(__file__),
-            "..",
-            "data",
-            "sample",
-            "sample_materials.json"
-        ),
-
-        os.path.join(
-            os.getcwd(),
-            "data",
-            "sample",
-            "sample_materials.json"
-        ),
-
-        os.path.join(
-            os.getcwd(),
-            "data",
-            "sample_materials.json"
-        )
-    ]
-
-    for path in possible_paths:
-        path = os.path.abspath(path)
-
-        if os.path.isfile(path):
-            return path
-
-    return None
-
-
-def load_pipeline_materials() -> Dict[str, Dict[str, Any]]:
-    """
-    Loads:
-
-        a001 -> complete pipeline record
-        a002 -> complete pipeline record
-        ...
-
-    This is ONLY used to understand the pipeline material ID.
-
-    It is NOT considered proof that material_code exists in
-    Supabase material_master.
-    """
-
-    if _pipeline_cache:
-        return _pipeline_cache
-
-    path = find_pipeline_file()
-
-    if not path:
-        return {}
-
-    try:
-        with open(path, "r", encoding="utf-8") as file:
-            data = json.load(file)
-
-    except Exception:
-        return {}
-
-    if not isinstance(data, list):
-        return {}
-
-    for row in data:
-
-        if not isinstance(row, dict):
-            continue
-
-        product_id = clean_text(
-            row.get("material_id")
-            or row.get("product_id")
-        )
-
-        if product_id:
-            _pipeline_cache[product_id] = row
-
-    return _pipeline_cache
-
-
-def get_pipeline_material(
-    product_id: str
-) -> Optional[Dict[str, Any]]:
-
-    materials = load_pipeline_materials()
-
-    return materials.get(product_id)
-
-
-# ============================================================
-# UUID EXTRACTION
+# UUID VALIDATION
 # ============================================================
 
 def is_uuid(value: Any) -> bool:
@@ -298,135 +191,9 @@ def is_uuid(value: Any) -> bool:
     return bool(re.match(pattern, value))
 
 
-def get_uuid_from_result(
-    result: Dict[str, Any],
-    side: str
-) -> Optional[str]:
-
-    """
-    IMPORTANT:
-
-    We first look for an actual UUID already present in the
-    matching/decision result.
-
-    We NEVER assume:
-
-        a012 == UUID
-        a012 == material_code
-
-    """
-
-    possible_fields = [
-        f"{side}_material_id",
-        f"{side}_uuid",
-        f"{side}_master_id",
-    ]
-
-    for field in possible_fields:
-
-        value = clean_text(result.get(field))
-
-        if is_uuid(value):
-            return value
-
-    return None
-
-
 # ============================================================
-# OPTIONAL MASTER RESOLUTION
+# MATERIAL UUID RESOLUTION
 # ============================================================
-
-def try_resolve_from_master(
-    result: Dict[str, Any],
-    side: str
-) -> Optional[str]:
-
-    """
-    This is deliberately conservative.
-
-    We only query material_master if the pipeline result actually
-    contains a material_code that we can use.
-
-    We do NOT throw an error if the code isn't present.
-
-    Why?
-
-    Because the pipeline sample material codes and the Supabase
-    material_master codes may currently belong to different datasets.
-
-    In that situation there is no legitimate UUID relationship for
-    this module to invent.
-    """
-
-    pipeline_id = clean_text(
-        result.get(f"{side}_product_id")
-    )
-
-    if not pipeline_id:
-        return None
-
-    if pipeline_id in _product_uuid_cache:
-        return _product_uuid_cache[pipeline_id]
-
-    pipeline_record = get_pipeline_material(pipeline_id)
-
-    material_code = ""
-
-    if pipeline_record:
-        material_code = clean_text(
-            pipeline_record.get("material_code")
-        )
-
-    # Future-compatible:
-    # if matching.py ever passes material_code, use it.
-    if not material_code:
-        material_code = clean_text(
-            result.get(f"{side}_material_code")
-        )
-
-    if not material_code:
-        _product_uuid_cache[pipeline_id] = None
-        return None
-
-    client = get_supabase()
-
-    try:
-
-        response = supabase_call(
-            lambda: (
-                client
-                .table(SUPABASE_MATERIAL_TABLE)
-                .select("material_id,material_code")
-                .eq("material_code", material_code)
-                .limit(2)
-                .execute()
-            ),
-            f"material_master lookup: {material_code}"
-        )
-
-    except Exception:
-        # Do NOT kill the entire pipeline because of a lookup failure.
-        _product_uuid_cache[pipeline_id] = None
-        return None
-
-    rows = response.data or []
-
-    if len(rows) != 1:
-        _product_uuid_cache[pipeline_id] = None
-        return None
-
-    material_id = clean_text(
-        rows[0].get("material_id")
-    )
-
-    if not is_uuid(material_id):
-        _product_uuid_cache[pipeline_id] = None
-        return None
-
-    _product_uuid_cache[pipeline_id] = material_id
-
-    return material_id
-
 
 def resolve_material_uuid(
     result: Dict[str, Any],
@@ -434,27 +201,37 @@ def resolve_material_uuid(
 ) -> Optional[str]:
 
     """
-    Resolution priority:
+    The AIML pipeline communicates using the actual
+    material_id UUID from material_master.
 
-    1. Actual UUID supplied by the pipeline
-    2. material_code -> material_master, IF that relationship exists
-    3. Otherwise None
+    05_matching.py provides:
 
-    No fabricated relationship.
+        left_product_id
+        right_product_id
+
+    These values are the actual material_id UUIDs.
+
+    Therefore:
+
+        left_product_id  -> material_id
+        right_product_id -> material_id
+
+    No material_code lookup is performed.
+    No legacy material number is used.
+    No UUID is fabricated.
     """
 
-    direct_uuid = get_uuid_from_result(
-        result,
-        side
+    material_uuid = clean_text(
+        result.get(f"{side}_product_id")
     )
 
-    if direct_uuid:
-        return direct_uuid
+    if not material_uuid:
+        return None
 
-    return try_resolve_from_master(
-        result,
-        side
-    )
+    if not is_uuid(material_uuid):
+        return None
+
+    return material_uuid
 
 
 # ============================================================
@@ -596,7 +373,6 @@ def find_existing_nmc(
 
     # --------------------------------------------------------
     # We cannot legitimately check material_mapping without UUID.
-    # Return a clean status instead of throwing an error.
     # --------------------------------------------------------
 
     if not resolved_material_ids:
@@ -606,8 +382,8 @@ def find_existing_nmc(
             "reason": (
                 "The matched pipeline materials could not be resolved "
                 "to Supabase material UUIDs. No material_mapping lookup "
-                "was attempted using pipeline IDs such as a012 because "
-                "those IDs are not UUIDs."
+                "was attempted using pipeline IDs because those IDs "
+                "are not valid material_id UUIDs."
             ),
             "pipeline_material_ids": unresolved_products
         }
@@ -1004,7 +780,6 @@ def generate_description(
 
     except json.JSONDecodeError:
 
-        # Remove markdown fences if model added them.
         content = content.replace(
             "```json",
             ""
@@ -1112,7 +887,7 @@ def run(
 
         MATCH
           ↓
-        Resolve actual material UUID
+        Read actual material_id UUIDs
           ↓
         material_mapping
           ↓
@@ -1132,7 +907,8 @@ def run(
 
         PENDING_MAPPING
 
-    No fake material_code lookup.
+    No sample JSON.
+    No material_code-based UUID lookup.
     No fake UUID.
     No description-based guessing.
     """
