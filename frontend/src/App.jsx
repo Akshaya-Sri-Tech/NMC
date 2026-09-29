@@ -11,6 +11,7 @@ import Pending from "./components/Pending";
 import HumanCheck from "./components/HumanCheck";
 import DemandPrediction from "./components/DemandPrediction";
 import Login from "./components/Login";
+import SAPIntegration from "./components/SAPIntegration.jsx";
 
 
 function App() {
@@ -58,7 +59,8 @@ const [globalSearchTrigger, setGlobalSearchTrigger] =
   globalSearchTrigger={globalSearchTrigger}
 />
         );
-
+      case "SAP Integration":
+        return <SAPIntegration />;
 
       case "Material Map Across India":
         return <MaterialMapping />;

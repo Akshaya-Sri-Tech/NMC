@@ -17,6 +17,10 @@ const menuItems = [
     icon: LayoutDashboard,
   },
   {
+    name: "SAP Integration",
+    icon: Database
+  },
+  {
     name: "NMC Code",
     icon: Hash,
   },
@@ -57,9 +61,8 @@ function Sidebar({
 }) {
   return (
     <aside
-      className={`sidebar ${
-        sidebarOpen ? "open" : "closed"
-      }`}
+      className={`sidebar ${sidebarOpen ? "open" : "closed"
+        }`}
     >
 
       {/* =================================================
@@ -73,9 +76,9 @@ function Sidebar({
         </div>
 
         <div className="brand-text">
-  <strong>Sangam_IN</strong>
-  <span>CPSE Material Intelligence</span>
-</div>
+          <strong>Sangam_IN</strong>
+          <span>CPSE Material Intelligence</span>
+        </div>
 
       </div>
 
@@ -97,11 +100,10 @@ function Sidebar({
           return (
             <button
               key={item.name}
-              className={`nav-item ${
-                activePage === item.name
+              className={`nav-item ${activePage === item.name
                   ? "active"
                   : ""
-              }`}
+                }`}
               onClick={() =>
                 setActivePage(item.name)
               }
@@ -145,8 +147,8 @@ function Sidebar({
         </div>
 
         <div className="version">
-  Sangam_IN • v1.0.0
-</div>
+          Sangam_IN • v1.0.0
+        </div>
 
       </div>
 
