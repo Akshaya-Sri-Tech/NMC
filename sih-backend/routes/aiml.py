@@ -125,5 +125,6 @@ def run_aiml():
 
     return {
         "message": "AI/ML processing successful!",
-        "aiml_response": aiml_response.json()
+        "aiml_response": aiml_response.json(),
+        "records_sent_to_aiml": len(materials)
     }

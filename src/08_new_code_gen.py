@@ -1,7 +1,7 @@
 
 import os
 
-import re
+
 
 import json
 
@@ -1103,6 +1103,11 @@ def run(
     # ========================================================
     # SEND TO BACKEND
     # ========================================================
+    print("\n========== SENDING NMC RESULT TO BACKEND ==========")
+    print(json.dumps(output, indent=2))
+    print("====================================================\n")
+
+
 
     backend_result = send_result_to_backend(
         output

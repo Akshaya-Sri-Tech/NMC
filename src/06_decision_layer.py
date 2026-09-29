@@ -65,6 +65,11 @@ def route_result(result):
     decision = result.get(
         "prototype_decision"
     )
+    print("\n===================================")
+    print("PROTOTYPE DECISION:", decision)
+    print("LEFT:", result.get("left_product_id"))
+    print("RIGHT:", result.get("right_product_id"))
+    print("===================================\n")
 
     # --------------------------------------------------------
     # Existing NMC
@@ -85,11 +90,13 @@ def route_result(result):
         updated_result = human_eval_module.run(
             result
         )
-
+        
+        """
         # Route the human-updated result again.
         return route_result(
             updated_result
         )
+        """
 
     # --------------------------------------------------------
     # Generate new NMC

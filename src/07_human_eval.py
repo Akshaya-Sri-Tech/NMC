@@ -33,7 +33,10 @@ def run(result):
     # --------------------------------------------------------
     # Prepare LEFT record
     # --------------------------------------------------------
-
+    print(
+    "\n>>> ENTERED HUMAN EVALUATION <<<",
+    flush=True
+    )
     left_record = {
         "product_id": result.get(
             "left_product_id"
@@ -714,6 +717,9 @@ RECORD B
         "differences": analysis.get(
             "differences",
             []
+        ),
+        "prototype_decision": result.get(
+        "prototype_decision"
         ),
     }
 

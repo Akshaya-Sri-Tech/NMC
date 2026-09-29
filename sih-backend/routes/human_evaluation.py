@@ -1,7 +1,9 @@
+
 from fastapi import APIRouter, HTTPException
 from database.connection import supabase
 from pydantic import BaseModel
 from typing import Optional, Any
+from datetime import datetime, timezone
 
 
 router = APIRouter(
@@ -53,10 +55,13 @@ class HumanDecisionUpdate(BaseModel):
 # ------------------------------------------------
 
 @router.post("")
-def create_human_evaluation(evaluation: HumanEvaluationCreate):
+def create_human_evaluation(
+    evaluation: HumanEvaluationCreate
+):
 
     data = evaluation.model_dump()
 
+    # Every new evaluation starts as PENDING
     data["status"] = "PENDING"
 
     response = (
@@ -97,6 +102,36 @@ def get_human_evaluations():
 
 
 # ------------------------------------------------
+# GET - GET ONE HUMAN EVALUATION
+# ------------------------------------------------
+
+@router.get("/{evaluation_id}")
+def get_human_evaluation(
+    evaluation_id: str
+):
+
+    response = (
+        supabase
+        .table("human_evaluations")
+        .select("*")
+        .eq(
+            "evaluation_id",
+            evaluation_id
+        )
+        .limit(1)
+        .execute()
+    )
+
+    if not response.data:
+        raise HTTPException(
+            status_code=404,
+            detail="Human evaluation not found."
+        )
+
+    return response.data[0]
+
+
+# ------------------------------------------------
 # PUT - SUBMIT HUMAN DECISION
 # ------------------------------------------------
 
@@ -116,219 +151,80 @@ def update_human_evaluation(
     ]:
         raise HTTPException(
             status_code=400,
-            detail="human_decision must be MATCH or NOT A MATCH."
-        )
-
-    # ------------------------------------------------
-    # GET PENDING HUMAN EVALUATION
-    # ------------------------------------------------
-
-    evaluation_response = (
-        supabase
-        .table("human_evaluations")
-        .select("*")
-        .eq("evaluation_id", evaluation_id)
-        .eq("status", "PENDING")
-        .limit(1)
-        .execute()
-    )
-
-    if not evaluation_response.data:
-        raise HTTPException(
-            status_code=404,
-            detail="Pending human evaluation not found."
-        )
-
-    evaluation = evaluation_response.data[0]
-
-    left_material_id = evaluation.get(
-        "left_product_id"
-    )
-
-    right_material_id = evaluation.get(
-        "right_product_id"
-    )
-
-    # ------------------------------------------------
-    # COLLECT MATERIAL IDS
-    # ------------------------------------------------
-
-    material_ids = []
-
-    if left_material_id:
-        material_ids.append(
-            left_material_id
-        )
-
-    if (
-        right_material_id
-        and right_material_id != left_material_id
-    ):
-        material_ids.append(
-            right_material_id
-        )
-
-    if not material_ids:
-        raise HTTPException(
-            status_code=400,
             detail=(
-                "Human evaluation does not contain "
-                "valid material IDs."
+                "human_decision must be "
+                "MATCH or NOT A MATCH."
             )
         )
 
     # ------------------------------------------------
-    # HUMAN ACCEPTED THE MATCH
+    # DETERMINE NEW STATUS
     # ------------------------------------------------
 
     if decision.human_decision == "MATCH":
 
-        # --------------------------------------------
-        # APPROVE MATERIAL MAPPING
-        # --------------------------------------------
-
-        mapping_response = (
-            supabase
-            .table("material_mapping")
-            .update({
-                "status": "APPROVED"
-            })
-            .in_(
-                "material_id",
-                material_ids
-            )
-            .eq(
-                "status",
-                "PENDING"
-            )
-            .execute()
-        )
-
-        if not mapping_response.data:
-            raise HTTPException(
-                status_code=404,
-                detail=(
-                    "No PENDING material_mapping records "
-                    "were found for the matched materials."
-                )
-            )
-
-        # --------------------------------------------
-        # APPROVE HUMAN EVALUATION
-        # --------------------------------------------
-
-        evaluation_update = (
-            supabase
-            .table("human_evaluations")
-            .update({
-                "human_decision": "MATCH",
-                "status": "APPROVED",
-                "completed_at": "now()"
-            })
-            .eq(
-                "evaluation_id",
-                evaluation_id
-            )
-            .eq(
-                "status",
-                "PENDING"
-            )
-            .execute()
-        )
-
-        if not evaluation_update.data:
-            raise HTTPException(
-                status_code=500,
-                detail=(
-                    "Material mapping was approved, "
-                    "but human evaluation could not "
-                    "be updated."
-                )
-            )
-
-        return {
-            "message": (
-                "Human evaluation approved and "
-                "material mapping approved successfully."
-            ),
-            "evaluation": evaluation_update.data[0],
-            "approved_mappings": mapping_response.data
-        }
-
-    # ------------------------------------------------
-    # HUMAN REJECTED THE MATCH
-    # ------------------------------------------------
+        new_status = "APPROVED"
 
     else:
 
-        # --------------------------------------------
-        # REJECT MATERIAL MAPPING
-        # --------------------------------------------
+        new_status = "REJECTED"
 
-        mapping_response = (
-            supabase
-            .table("material_mapping")
-            .update({
-                "status": "REJECTED"
-            })
-            .in_(
-                "material_id",
-                material_ids
+    # ------------------------------------------------
+    # UPDATE HUMAN EVALUATION
+    # ------------------------------------------------
+
+    response = (
+        supabase
+        .table("human_evaluations")
+        .update({
+            "human_decision":
+                decision.human_decision,
+
+            "status":
+                new_status,
+
+            "completed_at":
+                datetime.now(
+                    timezone.utc
+                ).isoformat()
+        })
+        .eq(
+            "evaluation_id",
+            evaluation_id
+        )
+        .eq(
+            "status",
+            "PENDING"
+        )
+        .execute()
+    )
+
+    # ------------------------------------------------
+    # CHECK WHETHER UPDATE SUCCEEDED
+    # ------------------------------------------------
+
+    if not response.data:
+
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                "Pending human evaluation "
+                "not found."
             )
-            .eq(
-                "status",
-                "PENDING"
-            )
-            .execute()
         )
 
-        if not mapping_response.data:
-            raise HTTPException(
-                status_code=404,
-                detail=(
-                    "No PENDING material_mapping records "
-                    "were found for the rejected materials."
-                )
-            )
+    # ------------------------------------------------
+    # FINAL RESPONSE
+    # ------------------------------------------------
 
-        # --------------------------------------------
-        # REJECT HUMAN EVALUATION
-        # --------------------------------------------
+    return {
 
-        evaluation_update = (
-            supabase
-            .table("human_evaluations")
-            .update({
-                "human_decision": "NOT A MATCH",
-                "status": "REJECTED",
-                "completed_at": "now()"
-            })
-            .eq(
-                "evaluation_id",
-                evaluation_id
-            )
-            .eq(
-                "status",
-                "PENDING"
-            )
-            .execute()
-        )
+        "message": (
+            f"Human evaluation "
+            f"{new_status.lower()} successfully."
+        ),
 
-        if not evaluation_update.data:
-            raise HTTPException(
-                status_code=500,
-                detail=(
-                    "Material mapping was rejected, "
-                    "but human evaluation could not "
-                    "be updated."
-                )
-            )
+        "evaluation":
+            response.data[0]
+    }
 
-        return {
-            "message": (
-                "Human evaluation rejected and "
-                "material mapping rejected successfully."
-            ),
-            "evaluation": evaluation_update.data[0],
-            "rejected_mappings": mapping_response.data
-        }
