@@ -1,5 +1,5 @@
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   Search,
@@ -12,402 +12,216 @@ import {
   AlertCircle,
 } from "lucide-react";
 
+import { getSampleMaterials } from "./api";
+
 
 /* =========================================================
-   DEMO NMC DATA
+   FRONTEND NMC CODE GENERATOR
 
-   Later this data can be replaced with backend API data.
-========================================================= */
+   Temporary frontend fallback for Step 8.
 
-const nmcMaterials = [
-  // =====================================================
-  // NMC-0001842 — Bearings
-  // =====================================================
-  {
-    id: 1,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "IOCL",
-    specification: "6205-2RS",
-    unit: "Nos",
-    description: "Deep groove ball bearing",
-  },
-  {
-    id: 2,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "BHEL",
-    specification: "6205-ZZ",
-    unit: "Nos",
-    description: "Shielded ball bearing",
-  },
-  {
-    id: 3,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "BPCL",
-    specification: "6205-2RS",
-    unit: "Nos",
-    description: "Rubber sealed bearing",
-  },
-  {
-    id: 4,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "ONGC",
-    specification: "6205-C3",
-    unit: "Nos",
-    description: "High temperature bearing",
-  },
-  {
-    id: 5,
-    nmcCode: "NMC-0001842",
-    material: "Deep Groove Bearing",
-    cpse: "IOCL",
-    specification: "6205-C3",
-    unit: "Nos",
-    description: "Clearance grade bearing",
-  },
-  {
-    id: 6,
-    nmcCode: "NMC-0001842",
-    material: "Industrial Bearing",
-    cpse: "BHEL",
-    specification: "6205-2RS",
-    unit: "Nos",
-    description: "Industrial duty bearing",
-  },
-  {
-    id: 7,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "HPCL",
-    specification: "6205-ZZ",
-    unit: "Nos",
-    description: "Metal shielded bearing",
-  },
-  {
-    id: 8,
-    nmcCode: "NMC-0001842",
-    material: "Bearing Assembly",
-    cpse: "ONGC",
-    specification: "6205-C4",
-    unit: "Nos",
-    description: "High clearance bearing",
-  },
+   This generates a deterministic NMC-style code from
+   the material category and its position in the dataset.
 
-  // =====================================================
-  // NMC-0001843 — Pipes
-  // =====================================================
-  {
-    id: 9,
-    nmcCode: "NMC-0001843",
-    material: "Steel Pipe",
-    cpse: "ONGC",
-    specification: "6 inch SCH 40",
-    unit: "Meter",
-    description: "Carbon steel process pipe",
-  },
-  {
-    id: 10,
-    nmcCode: "NMC-0001843",
-    material: "Steel Pipe",
-    cpse: "IOCL",
-    specification: "6 inch SCH 40",
-    unit: "Meter",
-    description: "Seamless carbon steel pipe",
-  },
-  {
-    id: 11,
-    nmcCode: "NMC-0001843",
-    material: "Carbon Steel Pipe",
-    cpse: "BPCL",
-    specification: "6 inch SCH 80",
-    unit: "Meter",
-    description: "Heavy duty process pipe",
-  },
-  {
-    id: 12,
-    nmcCode: "NMC-0001843",
-    material: "Seamless Pipe",
-    cpse: "HPCL",
-    specification: "6 inch SCH 40",
-    unit: "Meter",
-    description: "Seamless industrial pipe",
-  },
-  {
-    id: 13,
-    nmcCode: "NMC-0001843",
-    material: "Process Pipe",
-    cpse: "ONGC",
-    specification: "8 inch SCH 40",
-    unit: "Meter",
-    description: "Oil and gas process pipe",
-  },
-  {
-    id: 14,
-    nmcCode: "NMC-0001843",
-    material: "Steel Pipe",
-    cpse: "IOCL",
-    specification: "8 inch SCH 80",
-    unit: "Meter",
-    description: "High pressure steel pipe",
-  },
-  {
-    id: 15,
-    nmcCode: "NMC-0001843",
-    material: "Carbon Steel Pipe",
-    cpse: "BHEL",
-    specification: "6 inch SCH 40",
-    unit: "Meter",
-    description: "Fabricated carbon steel pipe",
-  },
-  {
-    id: 16,
-    nmcCode: "NMC-0001843",
-    material: "Industrial Pipe",
-    cpse: "BPCL",
-    specification: "8 inch SCH 40",
-    unit: "Meter",
-    description: "Industrial grade pipe",
-  },
+   Example:
+   Fasteners → NMC-FST-0001
+   Valves    → NMC-VLV-0002
+   Pipes     → NMC-PIP-0003
 
-  // =====================================================
-  // NMC-0001844 — Industrial Valves
-  // =====================================================
-  {
-    id: 17,
-    nmcCode: "NMC-0001844",
-    material: "Industrial Valve",
-    cpse: "BPCL",
-    specification: "150 NB Gate Valve",
-    unit: "Nos",
-    description: "Cast steel gate valve",
-  },
-  {
-    id: 18,
-    nmcCode: "NMC-0001844",
-    material: "Industrial Valve",
-    cpse: "IOCL",
-    specification: "150 NB Gate Valve",
-    unit: "Nos",
-    description: "Process isolation valve",
-  },
-  {
-    id: 19,
-    nmcCode: "NMC-0001844",
-    material: "Gate Valve",
-    cpse: "ONGC",
-    specification: "150 NB API 600",
-    unit: "Nos",
-    description: "API compliant gate valve",
-  },
-  {
-    id: 20,
-    nmcCode: "NMC-0001844",
-    material: "Ball Valve",
-    cpse: "HPCL",
-    specification: "150 NB Full Bore",
-    unit: "Nos",
-    description: "Full bore ball valve",
-  },
-  {
-    id: 21,
-    nmcCode: "NMC-0001844",
-    material: "Gate Valve",
-    cpse: "BPCL",
-    specification: "200 NB API 600",
-    unit: "Nos",
-    description: "Heavy duty gate valve",
-  },
-  {
-    id: 22,
-    nmcCode: "NMC-0001844",
-    material: "Industrial Valve",
-    cpse: "IOCL",
-    specification: "200 NB Gate Valve",
-    unit: "Nos",
-    description: "Carbon steel valve",
-  },
-  {
-    id: 23,
-    nmcCode: "NMC-0001844",
-    material: "Ball Valve",
-    cpse: "ONGC",
-    specification: "150 NB Full Bore",
-    unit: "Nos",
-    description: "Pipeline ball valve",
-  },
-  {
-    id: 24,
-    nmcCode: "NMC-0001844",
-    material: "Process Valve",
-    cpse: "BHEL",
-    specification: "150 NB Gate Valve",
-    unit: "Nos",
-    description: "Industrial process valve",
-  },
+   This is NOT the actual Step 8 common_material_code.
+   ========================================================= */
 
-  // =====================================================
-  // NMC-0001845 — Industrial Pumps
-  // =====================================================
-  {
-    id: 25,
-    nmcCode: "NMC-0001845",
-    material: "Centrifugal Pump",
-    cpse: "NTPC",
-    specification: "50 HP Horizontal",
-    unit: "Nos",
-    description: "Horizontal centrifugal pump",
-  },
-  {
-    id: 26,
-    nmcCode: "NMC-0001845",
-    material: "Centrifugal Pump",
-    cpse: "BHEL",
-    specification: "50 HP Horizontal",
-    unit: "Nos",
-    description: "Industrial centrifugal pump",
-  },
-  {
-    id: 27,
-    nmcCode: "NMC-0001845",
-    material: "Process Pump",
-    cpse: "IOCL",
-    specification: "60 HP Horizontal",
-    unit: "Nos",
-    description: "Process transfer pump",
-  },
-  {
-    id: 28,
-    nmcCode: "NMC-0001845",
-    material: "Water Pump",
-    cpse: "ONGC",
-    specification: "50 HP Vertical",
-    unit: "Nos",
-    description: "Vertical water pump",
-  },
-  {
-    id: 29,
-    nmcCode: "NMC-0001845",
-    material: "Centrifugal Pump",
-    cpse: "NTPC",
-    specification: "75 HP Horizontal",
-    unit: "Nos",
-    description: "High capacity centrifugal pump",
-  },
-  {
-    id: 30,
-    nmcCode: "NMC-0001845",
-    material: "Process Pump",
-    cpse: "BHEL",
-    specification: "60 HP Horizontal",
-    unit: "Nos",
-    description: "Process circulation pump",
-  },
-  {
-    id: 31,
-    nmcCode: "NMC-0001845",
-    material: "Industrial Pump",
-    cpse: "IOCL",
-    specification: "50 HP Horizontal",
-    unit: "Nos",
-    description: "Industrial duty pump",
-  },
-  {
-    id: 32,
-    nmcCode: "NMC-0001845",
-    material: "Centrifugal Pump",
-    cpse: "ONGC",
-    specification: "75 HP Vertical",
-    unit: "Nos",
-    description: "High pressure pump",
-  },
+function getCategoryPrefix(category, description) {
 
-  // =====================================================
-  // NMC-0001846 — Pressure Gauges
-  // =====================================================
-  {
-    id: 33,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "CPCL",
-    specification: "0-10 Bar",
-    unit: "Nos",
-    description: "Industrial pressure gauge",
-  },
-  {
-    id: 34,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "IOCL",
-    specification: "0-16 Bar",
-    unit: "Nos",
-    description: "Bourdon tube pressure gauge",
-  },
-  {
-    id: 35,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "BPCL",
-    specification: "0-10 Bar",
-    unit: "Nos",
-    description: "Process pressure gauge",
-  },
-  {
-    id: 36,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "ONGC",
-    specification: "0-16 Bar",
-    unit: "Nos",
-    description: "Stainless steel pressure gauge",
-  },
-  {
-    id: 37,
-    nmcCode: "NMC-0001846",
-    material: "Industrial Gauge",
-    cpse: "CPCL",
-    specification: "0-25 Bar",
-    unit: "Nos",
-    description: "High range pressure gauge",
-  },
-  {
-    id: 38,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "IOCL",
-    specification: "0-10 Bar",
-    unit: "Nos",
-    description: "Panel mounted gauge",
-  },
-  {
-    id: 39,
-    nmcCode: "NMC-0001846",
-    material: "Process Gauge",
-    cpse: "BPCL",
-    specification: "0-16 Bar",
-    unit: "Nos",
-    description: "Refinery process gauge",
-  },
-  {
-    id: 40,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "ONGC",
-    specification: "0-25 Bar",
-    unit: "Nos",
-    description: "Oil and gas pressure gauge",
-  },
-];
+  const text =
+    `${category || ""} ${description || ""}`
+      .toUpperCase();
+
+  if (
+    text.includes("BOLT") ||
+    text.includes("NUT") ||
+    text.includes("FASTENER") ||
+    text.includes("SCREW")
+  ) {
+    return "BLT";
+  }
+
+  if (
+    text.includes("VALVE")
+  ) {
+    return "VLV";
+  }
+
+  if (
+    text.includes("PIPE") ||
+    text.includes("TUBE")
+  ) {
+    return "PIP";
+  }
+
+  if (
+    text.includes("BEARING")
+  ) {
+    return "BRG";
+  }
+
+  if (
+    text.includes("CABLE") ||
+    text.includes("WIRE")
+  ) {
+    return "CBL";
+  }
+
+  if (
+    text.includes("PUMP")
+  ) {
+    return "PMP";
+  }
+
+  if (
+    text.includes("MOTOR")
+  ) {
+    return "MTR";
+  }
+
+  if (
+    text.includes("FILTER")
+  ) {
+    return "FLT";
+  }
+
+  if (
+    text.includes("GASKET")
+  ) {
+    return "GSK";
+  }
+
+  if (
+    text.includes("OIL") ||
+    text.includes("LUBRICANT")
+  ) {
+    return "LUB";
+  }
+
+  if (
+    text.includes("INSTRUMENT")
+  ) {
+    return "INS";
+  }
+
+  return "MAT";
+}
+
 
 function NMCCode() {
+
+  /* =======================================================
+     BACKEND DATA
+  ======================================================= */
+
+  const [nmcMaterials, setNmcMaterials] =
+    useState([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
+
+  useEffect(() => {
+
+    const loadMaterials = async () => {
+
+      try {
+
+        setLoading(true);
+
+        setError("");
+
+        const data =
+          await getSampleMaterials();
+
+        setNmcMaterials(
+          data.materials || []
+        );
+
+      } catch (err) {
+
+        console.error(
+          "Backend error:",
+          err
+        );
+
+        setError(
+          "Unable to load material data from backend."
+        );
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
+    loadMaterials();
+
+  }, []);
+
+
+  /* =======================================================
+     ADD FRONTEND NMC CODES
+  ======================================================= */
+
+  const materialsWithNMC = useMemo(() => {
+
+    /*
+      Sort by material_id so that the generated number
+      remains consistent for the same dataset.
+    */
+
+    const sortedMaterials =
+      [...nmcMaterials].sort(
+        (a, b) =>
+          String(a.material_id || "")
+            .localeCompare(
+              String(b.material_id || "")
+            )
+      );
+
+    return sortedMaterials.map(
+      (item, index) => {
+
+        const prefix =
+          getCategoryPrefix(
+            item.category,
+            item.material_description
+          );
+
+        const number =
+          String(index + 1)
+            .padStart(4, "0");
+
+        return {
+          ...item,
+
+          nmc_code:
+            `NMC-${prefix}-${number}`,
+        };
+
+      }
+    );
+
+  }, [nmcMaterials]);
+
 
   /* =======================================================
      STATE
   ======================================================= */
 
-  const [nmcSearch, setNmcSearch] = useState("");
+  const [nmcSearch, setNmcSearch] =
+    useState("");
 
   const [searchedCode, setSearchedCode] =
     useState("");
@@ -420,34 +234,41 @@ function NMCCode() {
 
 
   /* =======================================================
-     SEARCH NMC CODE
-  ======================================================= */
+     SEARCH
+     ======================================================= */
 
   const handleSearch = () => {
 
-    const value = nmcSearch.trim().toUpperCase();
+    const value =
+      nmcSearch.trim().toUpperCase();
 
     if (!value) {
+
       setSearchedCode("");
+
       return;
+
     }
 
     setSearchedCode(value);
 
-    /* Reset filters whenever a new NMC code is searched */
     setCpseFilter("All CPSEs");
+
     setMaterialFilter("All Materials");
+
   };
 
 
   /* =======================================================
      ENTER KEY SEARCH
-  ======================================================= */
+     ======================================================= */
 
   const handleKeyDown = (event) => {
 
     if (event.key === "Enter") {
+
       handleSearch();
+
     }
 
   };
@@ -455,99 +276,190 @@ function NMCCode() {
 
   /* =======================================================
      FILTER OPTIONS
-  ======================================================= */
-const availableMaterials = useMemo(() => {
+     ======================================================= */
 
-  if (!searchedCode) {
-    return [];
-  }
+  const availableMaterials =
+    useMemo(() => {
 
-  const results = nmcMaterials.filter(
-    (item) =>
-      item.nmcCode === searchedCode
-  );
+      if (!searchedCode) {
 
-  return [
-    ...new Set(
-      results.map(
-        (item) => item.material
-      )
-    ),
-  ];
+        return [];
 
-}, [searchedCode]);
+      }
+
+      const results =
+        materialsWithNMC.filter(
+          (item) =>
+            String(
+              item.nmc_code || ""
+            ).toUpperCase() ===
+              searchedCode ||
+            String(
+              item.material_code || ""
+            ).toUpperCase() ===
+              searchedCode
+        );
+
+      return [
+        ...new Set(
+          results.map(
+            (item) =>
+              item.material_description
+          )
+        ),
+      ];
+
+    }, [
+      searchedCode,
+      materialsWithNMC,
+    ]);
 
 
-  const availableCPSEs = useMemo(() => {
+  const availableCPSEs =
+    useMemo(() => {
 
-    if (!searchedCode) {
-      return [];
-    }
+      if (!searchedCode) {
 
-    const results = nmcMaterials.filter(
-      (item) =>
-        item.nmcCode === searchedCode
-    );
+        return [];
 
-    return [
-      ...new Set(
-        results.map(
-          (item) => item.cpse
-        )
-      ),
-    ];
+      }
 
-  }, [searchedCode]);
+      const results =
+        materialsWithNMC.filter(
+          (item) =>
+            String(
+              item.nmc_code || ""
+            ).toUpperCase() ===
+              searchedCode ||
+            String(
+              item.material_code || ""
+            ).toUpperCase() ===
+              searchedCode
+        );
+
+      return [
+        ...new Set(
+          results.map(
+            (item) =>
+              item.cpse_name
+          )
+        ),
+      ];
+
+    }, [
+      searchedCode,
+      materialsWithNMC,
+    ]);
 
 
   /* =======================================================
      FILTER RESULTS
-  ======================================================= */
+     ======================================================= */
 
-  const filteredMaterials = useMemo(() => {
+  const filteredMaterials =
+    useMemo(() => {
 
-    if (!searchedCode) {
-      return [];
-    }
+      if (!searchedCode) {
 
-    return nmcMaterials.filter((item) => {
+        return [];
 
-      const codeMatch =
-        item.nmcCode === searchedCode;
+      }
 
-      const cpseMatch =
-        cpseFilter === "All CPSEs" ||
-        item.cpse === cpseFilter;
+      return materialsWithNMC.filter(
+        (item) => {
 
-      const materialMatch =
-  materialFilter === "All Materials" ||
-  item.material === materialFilter;
+          const searchValue =
+            searchedCode;
 
-      return (
-        codeMatch &&
-        cpseMatch &&
-        materialMatch
+          const nmcMatch =
+            String(
+              item.nmc_code || ""
+            ).toUpperCase() ===
+              searchValue;
+
+          const materialCodeMatch =
+            String(
+              item.material_code || ""
+            ).toUpperCase() ===
+              searchValue;
+
+          const cpseMatch =
+            cpseFilter ===
+              "All CPSEs" ||
+            item.cpse_name ===
+              cpseFilter;
+
+          const materialMatch =
+            materialFilter ===
+              "All Materials" ||
+            item.material_description ===
+              materialFilter;
+
+          return (
+            (nmcMatch ||
+              materialCodeMatch) &&
+            cpseMatch &&
+            materialMatch
+          );
+
+        }
       );
 
-    });
-
-  }, [
-    searchedCode,
-    cpseFilter,
-    materialFilter,
-  ]);
+    }, [
+      searchedCode,
+      cpseFilter,
+      materialFilter,
+      materialsWithNMC,
+    ]);
 
 
   /* =======================================================
      CLEAR FILTERS
-  ======================================================= */
+     ======================================================= */
 
   const clearFilters = () => {
 
-    setCpseFilter("All CPSEs");
-    setMaterialFilter("All Materials");
+    setCpseFilter(
+      "All CPSEs"
+    );
+
+    setMaterialFilter(
+      "All Materials"
+    );
 
   };
+
+
+  /* =======================================================
+     LOADING STATE
+     ======================================================= */
+
+  if (loading) {
+
+    return (
+
+      <div className="nmc-page">
+
+        <div className="nmc-initial-state">
+
+          <Package size={32} />
+
+          <h3>
+            Loading material data...
+          </h3>
+
+          <p>
+            Fetching standardized material
+            information from the backend.
+          </p>
+
+        </div>
+
+      </div>
+
+    );
+
+  }
 
 
   /* =======================================================
@@ -555,6 +467,7 @@ const availableMaterials = useMemo(() => {
   ======================================================= */
 
   return (
+
     <div className="nmc-page">
 
 
@@ -575,13 +488,36 @@ const availableMaterials = useMemo(() => {
           </h2>
 
           <p>
-            Search a National Material Code and
-            view all materials mapped across CPSEs.
+            Search a standardized material code
+            and view associated materials across CPSEs.
           </p>
 
         </div>
 
       </div>
+
+
+      {/* =================================================
+          BACKEND ERROR
+      ================================================= */}
+
+      {error && (
+
+        <div className="nmc-empty-state">
+
+          <AlertCircle size={30} />
+
+          <h3>
+            Backend connection failed
+          </h3>
+
+          <p>
+            {error}
+          </p>
+
+        </div>
+
+      )}
 
 
       {/* =================================================
@@ -603,8 +539,8 @@ const availableMaterials = useMemo(() => {
               </h3>
 
               <span>
-                Enter an NMC code to view all
-                associated materials.
+                Enter an NMC code to view
+                the associated material record.
               </span>
 
             </div>
@@ -629,7 +565,7 @@ const availableMaterials = useMemo(() => {
                 )
               }
               onKeyDown={handleKeyDown}
-              placeholder="Enter NMC code e.g. NMC-0001842"
+              placeholder="Enter NMC code e.g. NMC-BLT-0001"
             />
 
           </div>
@@ -639,8 +575,11 @@ const availableMaterials = useMemo(() => {
             className="nmc-search-button"
             onClick={handleSearch}
           >
+
             <Search size={16} />
+
             Search
+
           </button>
 
         </div>
@@ -674,8 +613,8 @@ const availableMaterials = useMemo(() => {
               </h3>
 
               <span>
-                Materials mapped to this
-                standardized code
+                Material records associated with
+                this standardized code
               </span>
 
             </div>
@@ -738,12 +677,14 @@ const availableMaterials = useMemo(() => {
 
                 {availableCPSEs.map(
                   (cpse) => (
+
                     <option
                       key={cpse}
                       value={cpse}
                     >
                       {cpse}
                     </option>
+
                   )
                 )}
 
@@ -774,13 +715,15 @@ const availableMaterials = useMemo(() => {
                 </option>
 
                 {availableMaterials.map(
-                  (category) => (
+                  (material) => (
+
                     <option
-                      key={category}
-                      value={category}
+                      key={material}
+                      value={material}
                     >
-                      {category}
+                      {material}
                     </option>
+
                   )
                 )}
 
@@ -824,6 +767,10 @@ const availableMaterials = useMemo(() => {
                     </th>
 
                     <th>
+                      MATERIAL CODE
+                    </th>
+
+                    <th>
                       MATERIAL
                     </th>
 
@@ -850,17 +797,36 @@ const availableMaterials = useMemo(() => {
                     (item, index) => (
 
                       <tr
-                        key={`${item.nmcCode}-${item.cpse}-${index}`}
+                        key={`${item.material_id}-${index}`}
                       >
+
+                        {/* NMC CODE */}
 
                         <td>
 
                           <span className="nmc-code-badge">
-                            {item.nmcCode}
+
+                            {item.nmc_code}
+
                           </span>
 
                         </td>
 
+
+                        {/* ORIGINAL MATERIAL CODE */}
+
+                        <td>
+
+                          <span className="nmc-category">
+
+                            {item.material_code || "—"}
+
+                          </span>
+
+                        </td>
+
+
+                        {/* MATERIAL */}
 
                         <td>
 
@@ -869,7 +835,7 @@ const availableMaterials = useMemo(() => {
                             <Package size={16} />
 
                             <strong>
-                              {item.material}
+                              {item.material_description}
                             </strong>
 
                           </div>
@@ -877,28 +843,42 @@ const availableMaterials = useMemo(() => {
                         </td>
 
 
+                        {/* CATEGORY */}
+
                         <td>
 
                           <span className="nmc-category">
-                            {item.category}
+
+                            {item.category || "—"}
+
                           </span>
 
                         </td>
 
+
+                        {/* CPSE */}
 
                         <td>
 
                           <span className="nmc-cpse">
-                            {item.cpse}
+
+                            {item.cpse_code}
+
                           </span>
 
                         </td>
 
 
+                        {/* SPECIFICATION */}
+
                         <td>
 
                           <span className="nmc-specification">
-                            {item.specification}
+
+                            {item.specification ||
+                              item.material_description ||
+                              "—"}
+
                           </span>
 
                         </td>
@@ -925,8 +905,8 @@ const availableMaterials = useMemo(() => {
               </h3>
 
               <p>
-                No materials match the selected
-                CPSE and material filters.
+                No material matches the searched
+                NMC code and filters.
               </p>
 
             </div>
@@ -942,7 +922,7 @@ const availableMaterials = useMemo(() => {
           INITIAL STATE
       ================================================= */}
 
-      {!searchedCode && (
+      {!searchedCode && !error && (
 
         <div className="nmc-initial-state">
 
@@ -954,7 +934,7 @@ const availableMaterials = useMemo(() => {
 
           <p>
             Enter an NMC code above to view
-            all materials mapped across CPSEs.
+            the associated material.
           </p>
 
         </div>
@@ -962,10 +942,10 @@ const availableMaterials = useMemo(() => {
       )}
 
     </div>
+
   );
+
 }
 
 
 export default NMCCode;
-
-

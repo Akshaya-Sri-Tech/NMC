@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+
+import { useEffect, useMemo, useState } from "react";
 
 import {
   Search,
@@ -13,443 +14,33 @@ import {
   CircleDot,
 } from "lucide-react";
 
-/* =========================================================
-   DEMO SMART SUBSTITUTION DATA
-========================================================= */
+import {
+  getSampleMaterials,
+  standardizeMaterials,
+} from "./api";
 
-/* =========================================================
-   DEMO SMART SUBSTITUTION DATA
-========================================================= */
-
-const substitutionData = [
-  // =====================================================
-  // NMC-0001842 — Bearings
-  // =====================================================
-  {
-    id: 1,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "IOCL",
-    specification: "6205-2RS",
-    price: 1240,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 2,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "BHEL",
-    specification: "6205-ZZ",
-    price: 1275,
-    availability: "Limited",
-    compatibility: "Compatible",
-  },
-  {
-    id: 3,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "BPCL",
-    specification: "6205-2RS",
-    price: 1310,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 4,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "ONGC",
-    specification: "6205-C3",
-    price: 1980,
-    availability: "Limited",
-    compatibility: "Conditional",
-  },
-  {
-    id: 5,
-    nmcCode: "NMC-0001842",
-    material: "Deep Groove Bearing",
-    cpse: "IOCL",
-    specification: "6205-C3",
-    price: 1420,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 6,
-    nmcCode: "NMC-0001842",
-    material: "Industrial Bearing",
-    cpse: "BHEL",
-    specification: "6205-2RS",
-    price: 1560,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 7,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "HPCL",
-    specification: "6205-ZZ",
-    price: 1690,
-    availability: "Limited",
-    compatibility: "Conditional",
-  },
-  {
-    id: 8,
-    nmcCode: "NMC-0001842",
-    material: "Bearing Assembly",
-    cpse: "ONGC",
-    specification: "6205-C4",
-    price: 2450,
-    availability: "Available",
-    compatibility: "Incompatible",
-  },
-
-  // =====================================================
-  // NMC-0001843 — Pipes
-  // =====================================================
-  {
-    id: 9,
-    nmcCode: "NMC-0001843",
-    material: "Steel Pipe",
-    cpse: "ONGC",
-    specification: "6 inch SCH 40",
-    price: 48500,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 10,
-    nmcCode: "NMC-0001843",
-    material: "Steel Pipe",
-    cpse: "IOCL",
-    specification: "6 inch SCH 40",
-    price: 49200,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 11,
-    nmcCode: "NMC-0001843",
-    material: "Carbon Steel Pipe",
-    cpse: "BPCL",
-    specification: "6 inch SCH 80",
-    price: 51500,
-    availability: "Limited",
-    compatibility: "Conditional",
-  },
-  {
-    id: 12,
-    nmcCode: "NMC-0001843",
-    material: "Seamless Pipe",
-    cpse: "HPCL",
-    specification: "6 inch SCH 40",
-    price: 68200,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 13,
-    nmcCode: "NMC-0001843",
-    material: "Process Pipe",
-    cpse: "ONGC",
-    specification: "8 inch SCH 40",
-    price: 53800,
-    availability: "Available",
-    compatibility: "Conditional",
-  },
-  {
-    id: 14,
-    nmcCode: "NMC-0001843",
-    material: "Steel Pipe",
-    cpse: "IOCL",
-    specification: "8 inch SCH 80",
-    price: 55700,
-    availability: "Limited",
-    compatibility: "Incompatible",
-  },
-  {
-    id: 15,
-    nmcCode: "NMC-0001843",
-    material: "Carbon Steel Pipe",
-    cpse: "BHEL",
-    specification: "6 inch SCH 40",
-    price: 52100,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 16,
-    nmcCode: "NMC-0001843",
-    material: "Industrial Pipe",
-    cpse: "BPCL",
-    specification: "8 inch SCH 40",
-    price: 79500,
-    availability: "Limited",
-    compatibility: "Incompatible",
-  },
-
-  // =====================================================
-  // NMC-0001844 — Valves
-  // =====================================================
-  {
-    id: 17,
-    nmcCode: "NMC-0001844",
-    material: "Industrial Valve",
-    cpse: "BPCL",
-    specification: "150 NB Gate Valve",
-    price: 8200,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 18,
-    nmcCode: "NMC-0001844",
-    material: "Industrial Valve",
-    cpse: "IOCL",
-    specification: "150 NB Gate Valve",
-    price: 8450,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 19,
-    nmcCode: "NMC-0001844",
-    material: "Gate Valve",
-    cpse: "ONGC",
-    specification: "150 NB API 600",
-    price: 8700,
-    availability: "Limited",
-    compatibility: "Conditional",
-  },
-  {
-    id: 20,
-    nmcCode: "NMC-0001844",
-    material: "Ball Valve",
-    cpse: "HPCL",
-    specification: "150 NB Full Bore",
-    price: 12900,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 21,
-    nmcCode: "NMC-0001844",
-    material: "Gate Valve",
-    cpse: "BPCL",
-    specification: "200 NB API 600",
-    price: 9100,
-    availability: "Available",
-    compatibility: "Conditional",
-  },
-  {
-    id: 22,
-    nmcCode: "NMC-0001844",
-    material: "Industrial Valve",
-    cpse: "IOCL",
-    specification: "200 NB Gate Valve",
-    price: 9350,
-    availability: "Limited",
-    compatibility: "Incompatible",
-  },
-  {
-    id: 23,
-    nmcCode: "NMC-0001844",
-    material: "Ball Valve",
-    cpse: "ONGC",
-    specification: "150 NB Full Bore",
-    price: 9750,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 24,
-    nmcCode: "NMC-0001844",
-    material: "Process Valve",
-    cpse: "BHEL",
-    specification: "150 NB Gate Valve",
-    price: 14600,
-    availability: "Limited",
-    compatibility: "Incompatible",
-  },
-
-  // =====================================================
-  // NMC-0001845 — Pumps
-  // =====================================================
-  {
-    id: 25,
-    nmcCode: "NMC-0001845",
-    material: "Centrifugal Pump",
-    cpse: "NTPC",
-    specification: "50 HP Horizontal",
-    price: 84500,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 26,
-    nmcCode: "NMC-0001845",
-    material: "Centrifugal Pump",
-    cpse: "BHEL",
-    specification: "50 HP Horizontal",
-    price: 87200,
-    availability: "Limited",
-    compatibility: "Compatible",
-  },
-  {
-    id: 27,
-    nmcCode: "NMC-0001845",
-    material: "Process Pump",
-    cpse: "IOCL",
-    specification: "60 HP Horizontal",
-    price: 91800,
-    availability: "Available",
-    compatibility: "Conditional",
-  },
-  {
-    id: 28,
-    nmcCode: "NMC-0001845",
-    material: "Water Pump",
-    cpse: "ONGC",
-    specification: "50 HP Vertical",
-    price: 128500,
-    availability: "Available",
-    compatibility: "Incompatible",
-  },
-  {
-    id: 29,
-    nmcCode: "NMC-0001845",
-    material: "Centrifugal Pump",
-    cpse: "NTPC",
-    specification: "75 HP Horizontal",
-    price: 96500,
-    availability: "Available",
-    compatibility: "Conditional",
-  },
-  {
-    id: 30,
-    nmcCode: "NMC-0001845",
-    material: "Process Pump",
-    cpse: "BHEL",
-    specification: "60 HP Horizontal",
-    price: 101200,
-    availability: "Limited",
-    compatibility: "Compatible",
-  },
-  {
-    id: 31,
-    nmcCode: "NMC-0001845",
-    material: "Industrial Pump",
-    cpse: "IOCL",
-    specification: "50 HP Horizontal",
-    price: 98700,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 32,
-    nmcCode: "NMC-0001845",
-    material: "Centrifugal Pump",
-    cpse: "ONGC",
-    specification: "75 HP Vertical",
-    price: 151000,
-    availability: "Limited",
-    compatibility: "Incompatible",
-  },
-
-  // =====================================================
-  // NMC-0001846 — Pressure Gauges
-  // =====================================================
-  {
-    id: 33,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "CPCL",
-    specification: "0-10 Bar",
-    price: 3250,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 34,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "IOCL",
-    specification: "0-16 Bar",
-    price: 3400,
-    availability: "Available",
-    compatibility: "Compatible",
-  },
-  {
-    id: 35,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "BPCL",
-    specification: "0-10 Bar",
-    price: 3520,
-    availability: "Limited",
-    compatibility: "Compatible",
-  },
-  {
-    id: 36,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "ONGC",
-    specification: "0-16 Bar",
-    price: 4900,
-    availability: "Available",
-    compatibility: "Conditional",
-  },
-  {
-    id: 37,
-    nmcCode: "NMC-0001846",
-    material: "Industrial Gauge",
-    cpse: "CPCL",
-    specification: "0-25 Bar",
-    price: 4100,
-    availability: "Available",
-    compatibility: "Conditional",
-  },
-  {
-    id: 38,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "IOCL",
-    specification: "0-10 Bar",
-    price: 3750,
-    availability: "Limited",
-    compatibility: "Compatible",
-  },
-  {
-    id: 39,
-    nmcCode: "NMC-0001846",
-    material: "Process Gauge",
-    cpse: "BPCL",
-    specification: "0-16 Bar",
-    price: 4280,
-    availability: "Available",
-    compatibility: "Incompatible",
-  },
-  {
-    id: 40,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "ONGC",
-    specification: "0-25 Bar",
-    price: 7200,
-    availability: "Limited",
-    compatibility: "Incompatible",
-  },
-];
 
 /* =========================================================
    COMPONENT
 ========================================================= */
 
 function SmartSubstitution() {
-  const [search, setSearch] = useState("");
-  const [searchedValue, setSearchedValue] = useState("");
+
+  const [substitutionData, setSubstitutionData] =
+    useState([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
+
+  const [search, setSearch] =
+    useState("");
+
+  const [searchedValue, setSearchedValue] =
+    useState("");
 
   const [cpseFilter, setCpseFilter] =
     useState("All CPSEs");
@@ -466,12 +57,288 @@ function SmartSubstitution() {
   const [selectedMaterial, setSelectedMaterial] =
     useState(null);
 
+
+  /* =========================================================
+     LOAD BACKEND + RUN STANDARDIZATION
+  ========================================================= */
+
+  useEffect(() => {
+
+    async function loadSubstitutionData() {
+
+      try {
+
+        setLoading(true);
+        setError("");
+
+
+        /* -----------------------------------------------
+           1. Get raw material records
+        ------------------------------------------------ */
+
+        const materialResponse =
+          await getSampleMaterials();
+
+        const materials =
+          materialResponse.materials || [];
+
+
+        if (!materials.length) {
+
+          setSubstitutionData([]);
+          setLoading(false);
+
+          return;
+
+        }
+
+
+        /* -----------------------------------------------
+           2. Send materials to AI/ML backend
+        ------------------------------------------------ */
+
+        const standardizeResponse =
+          await standardizeMaterials(
+            materials
+          );
+          console.log(
+  "STANDARDIZE RESPONSE:",
+  standardizeResponse
+);
+
+        const results =
+          standardizeResponse.results || [];
+
+
+        /* -----------------------------------------------
+           3. Convert backend matching results
+              into substitution records
+        ------------------------------------------------ */
+
+        const formattedResults =
+          results.map((item, index) => {
+
+            const leftId =
+              item.left_product_id;
+
+            const rightId =
+              item.right_product_id;
+
+
+            const leftMaterial =
+              materials.find(
+                (material) =>
+                  material.material_id ===
+                  leftId
+              );
+
+
+            const rightMaterial =
+              materials.find(
+                (material) =>
+                  material.material_id ===
+                  rightId
+              );
+
+
+            /*
+              Use the right-side material as the
+              possible substitution option.
+            */
+
+            const source =
+              leftMaterial || {};
+
+            const alternative =
+              rightMaterial || {};
+
+
+            const score =
+              Number(
+                item.splink_score
+              ) || 0;
+
+
+            /* -----------------------------------------
+               Compatibility presentation
+
+               MATCH with very high score
+               → Compatible
+
+               MATCH with lower score
+               → Conditional
+
+               NEW_NMC_CODE
+               → Incompatible
+            ----------------------------------------- */
+
+            let compatibility =
+              "Incompatible";
+
+
+            if (
+              item.prototype_decision ===
+              "MATCH"
+            ) {
+
+              if (score >= 0.99) {
+
+                compatibility =
+                  "Compatible";
+
+              } else {
+
+                compatibility =
+                  "Conditional";
+
+              }
+
+            }
+
+
+            /*
+              The backend currently does not contain
+              an availability field.
+
+              We therefore mark records as Available
+              when they exist in the backend dataset.
+            */
+
+            const availability =
+              alternative.material_id
+                ? "Available"
+                : "Limited";
+
+
+            return {
+
+              id:
+                `${leftId}-${rightId}-${index}`,
+
+              materialCode:
+                alternative.material_code ||
+                alternative.material_id ||
+                "—",
+
+              sourceMaterialCode:
+                source.material_code ||
+                source.material_id ||
+                "—",
+
+              material:
+                alternative.material_description ||
+                item.right_product_type ||
+                "Unknown Material",
+
+              sourceMaterial:
+                source.material_description ||
+                item.left_product_type ||
+                "Unknown Material",
+
+              cpse:
+                alternative.cpse_code ||
+                item.right_cpse ||
+                "—",
+
+              cpseName:
+                alternative.cpse_name ||
+                item.right_cpse ||
+                "—",
+
+              specification:
+                alternative.specification ||
+                alternative.material_description ||
+                item.right_technical_desc ||
+                "—",
+
+              technicalDescription:
+                item.right_technical_desc ||
+                alternative.specification ||
+                "—",
+
+              category:
+                alternative.category ||
+                alternative.material_group ||
+                "—",
+
+              price:
+                Number(
+                  alternative.procurement_price_inr
+                ) || 0,
+
+              availability,
+
+              compatibility,
+
+              score,
+
+              decision:
+                item.prototype_decision ||
+                "—",
+
+              sourceId:
+                leftId,
+
+              alternativeId:
+                rightId,
+
+            };
+
+          });
+
+
+        /*
+          Remove self-matches where both sides
+          refer to the same material.
+        */
+
+        const cleanedResults =
+          formattedResults.filter(
+            (item) =>
+              item.sourceId !==
+              item.alternativeId
+          );
+
+
+        setSubstitutionData(
+          cleanedResults
+        );
+
+        setLoading(false);
+
+      }
+
+      catch (err) {
+
+        console.error(
+          "Smart substitution backend error:",
+          err
+        );
+
+        setError(
+          "Unable to load substitution results from backend."
+        );
+
+        setLoading(false);
+
+      }
+
+    }
+
+
+    loadSubstitutionData();
+
+  }, []);
+
+
   /* =========================================================
      SEARCH
   ========================================================= */
 
   const handleSearch = () => {
-    const value = search.trim();
+
+    const value =
+      search.trim();
 
     setSearchedValue(value);
 
@@ -479,50 +346,88 @@ function SmartSubstitution() {
     setMaterialFilter("All Materials");
     setAvailabilityFilter("All");
     setCompatibilityFilter("All");
+
   };
 
+
   const handleKeyDown = (event) => {
+
     if (event.key === "Enter") {
+
       handleSearch();
+
     }
+
   };
+
 
   /* =========================================================
      SEARCH RESULTS
   ========================================================= */
 
   const searchedData = useMemo(() => {
+
     if (!searchedValue) {
+
       return [];
+
     }
+
 
     const searchLower =
       searchedValue.toLowerCase();
 
+
     return substitutionData.filter(
       (item) =>
-        item.nmcCode
+
+        item.materialCode
           .toLowerCase()
           .includes(searchLower) ||
+
         item.material
           .toLowerCase()
+          .includes(searchLower) ||
+
+        item.sourceMaterial
+          .toLowerCase()
+          .includes(searchLower) ||
+
+        item.cpse
+          .toLowerCase()
+          .includes(searchLower) ||
+
+        item.cpseName
+          .toLowerCase()
           .includes(searchLower)
+
     );
-  }, [searchedValue]);
+
+  }, [
+    searchedValue,
+    substitutionData,
+  ]);
+
 
   /* =========================================================
      FILTER OPTIONS
   ========================================================= */
 
   const availableCPSEs = useMemo(() => {
+
     return [
       ...new Set(
-        searchedData.map((item) => item.cpse)
+        searchedData.map(
+          (item) => item.cpse
+        )
       ),
     ];
+
   }, [searchedData]);
 
+
   const availableMaterials = useMemo(() => {
+
     return [
       ...new Set(
         searchedData.map(
@@ -530,32 +435,41 @@ function SmartSubstitution() {
         )
       ),
     ];
+
   }, [searchedData]);
+
 
   /* =========================================================
      FILTERED RESULTS
   ========================================================= */
 
   const filteredData = useMemo(() => {
+
     return searchedData
+
       .filter((item) => {
+
         const cpseMatch =
           cpseFilter === "All CPSEs" ||
           item.cpse === cpseFilter;
 
+
         const materialMatch =
           materialFilter === "All Materials" ||
           item.material === materialFilter;
+
 
         const availabilityMatch =
           availabilityFilter === "All" ||
           item.availability ===
             availabilityFilter;
 
+
         const compatibilityMatch =
           compatibilityFilter === "All" ||
           item.compatibility ===
             compatibilityFilter;
+
 
         return (
           cpseMatch &&
@@ -563,8 +477,14 @@ function SmartSubstitution() {
           availabilityMatch &&
           compatibilityMatch
         );
+
       })
-      .sort((a, b) => a.price - b.price);
+
+      .sort(
+        (a, b) =>
+          a.price - b.price
+      );
+
   }, [
     searchedData,
     cpseFilter,
@@ -573,6 +493,7 @@ function SmartSubstitution() {
     compatibilityFilter,
   ]);
 
+
   /* =========================================================
      SUMMARY
   ========================================================= */
@@ -580,14 +501,18 @@ function SmartSubstitution() {
   const availableCount =
     filteredData.filter(
       (item) =>
-        item.availability === "Available"
+        item.availability ===
+        "Available"
     ).length;
+
 
   const compatibleCount =
     filteredData.filter(
       (item) =>
-        item.compatibility === "Compatible"
+        item.compatibility ===
+        "Compatible"
     ).length;
+
 
   const cpseCount =
     new Set(
@@ -596,22 +521,27 @@ function SmartSubstitution() {
       )
     ).size;
 
+
   /* =========================================================
      CLEAR FILTERS
   ========================================================= */
 
   const clearFilters = () => {
+
     setCpseFilter("All CPSEs");
     setMaterialFilter("All Materials");
     setAvailabilityFilter("All");
     setCompatibilityFilter("All");
+
   };
+
 
   /* =========================================================
      PRICE FORMAT
   ========================================================= */
 
   const formatPrice = (price) => {
+
     return new Intl.NumberFormat(
       "en-IN",
       {
@@ -620,10 +550,93 @@ function SmartSubstitution() {
         maximumFractionDigits: 0,
       }
     ).format(price);
+
   };
 
+
+  /* =========================================================
+     LOADING
+  ========================================================= */
+
+  if (loading) {
+
+    return (
+
+      <div className="smart-substitution-page">
+
+        <div className="substitution-page-header">
+
+          <div>
+
+            <div className="substitution-eyebrow">
+              PROCUREMENT OPTIMIZATION
+            </div>
+
+            <h2>
+              Smart Substitution Across CPSE
+            </h2>
+
+            <p>
+              Running material harmonization
+              and substitution analysis...
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    );
+
+  }
+
+
+  /* =========================================================
+     ERROR
+  ========================================================= */
+
+  if (error) {
+
+    return (
+
+      <div className="smart-substitution-page">
+
+        <div className="substitution-page-header">
+
+          <div>
+
+            <div className="substitution-eyebrow">
+              PROCUREMENT OPTIMIZATION
+            </div>
+
+            <h2>
+              Smart Substitution Across CPSE
+            </h2>
+
+            <p>
+              {error}
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    );
+
+  }
+
+
+  /* =========================================================
+     RENDER
+  ========================================================= */
+
   return (
+
     <div className="smart-substitution-page">
+
 
       {/* =================================================
           PAGE HEADER
@@ -651,6 +664,7 @@ function SmartSubstitution() {
 
       </div>
 
+
       {/* =================================================
           SEARCH PANEL
       ================================================= */}
@@ -668,13 +682,14 @@ function SmartSubstitution() {
             </h3>
 
             <span>
-              Search using an NMC code or
-              material name.
+              Search using a material code,
+              material name or CPSE.
             </span>
 
           </div>
 
         </div>
+
 
         <div className="substitution-search-row">
 
@@ -685,13 +700,16 @@ function SmartSubstitution() {
             <input
               value={search}
               onChange={(event) =>
-                setSearch(event.target.value)
+                setSearch(
+                  event.target.value
+                )
               }
               onKeyDown={handleKeyDown}
-              placeholder="Enter NMC code or material name..."
+              placeholder="Enter material code, material name or CPSE..."
             />
 
           </div>
+
 
           <button
             className="substitution-search-button"
@@ -705,11 +723,13 @@ function SmartSubstitution() {
 
       </section>
 
+
       {/* =================================================
           SUMMARY CARDS
       ================================================= */}
 
       {searchedValue && (
+
         <div className="substitution-summary-grid">
 
           <div className="substitution-summary-card">
@@ -732,6 +752,7 @@ function SmartSubstitution() {
 
           </div>
 
+
           <div className="substitution-summary-card">
 
             <div className="substitution-summary-icon">
@@ -752,6 +773,7 @@ function SmartSubstitution() {
 
           </div>
 
+
           <div className="substitution-summary-card">
 
             <div className="substitution-summary-icon">
@@ -771,6 +793,7 @@ function SmartSubstitution() {
             </div>
 
           </div>
+
 
           <div className="substitution-summary-card">
 
@@ -793,13 +816,16 @@ function SmartSubstitution() {
           </div>
 
         </div>
+
       )}
+
 
       {/* =================================================
           RESULTS
       ================================================= */}
 
       <section className="substitution-results-section">
+
 
         <div className="substitution-results-header">
 
@@ -822,6 +848,7 @@ function SmartSubstitution() {
 
         </div>
 
+
         {/* =================================================
             FILTER BAR
         ================================================= */}
@@ -830,6 +857,7 @@ function SmartSubstitution() {
           searchedData.length > 0 && (
 
             <div className="substitution-filter-bar">
+
 
               <div className="substitution-filter-label">
 
@@ -840,6 +868,7 @@ function SmartSubstitution() {
                 </span>
 
               </div>
+
 
               {/* CPSE */}
 
@@ -862,18 +891,21 @@ function SmartSubstitution() {
 
                   {availableCPSEs.map(
                     (cpse) => (
+
                       <option
                         key={cpse}
                         value={cpse}
                       >
                         {cpse}
                       </option>
+
                     )
                   )}
 
                 </select>
 
               </div>
+
 
               {/* MATERIAL */}
 
@@ -896,18 +928,21 @@ function SmartSubstitution() {
 
                   {availableMaterials.map(
                     (material) => (
+
                       <option
                         key={material}
                         value={material}
                       >
                         {material}
                       </option>
+
                     )
                   )}
 
                 </select>
 
               </div>
+
 
               {/* AVAILABILITY */}
 
@@ -940,6 +975,7 @@ function SmartSubstitution() {
 
               </div>
 
+
               {/* COMPATIBILITY */}
 
               <div className="substitution-filter-control">
@@ -963,9 +999,18 @@ function SmartSubstitution() {
                     Compatible
                   </option>
 
+                  <option value="Conditional">
+                    Conditional
+                  </option>
+
+                  <option value="Incompatible">
+                    Incompatible
+                  </option>
+
                 </select>
 
               </div>
+
 
               <button
                 className="substitution-clear-button"
@@ -979,7 +1024,9 @@ function SmartSubstitution() {
               </button>
 
             </div>
+
           )}
+
 
         {/* =================================================
             TABLE
@@ -997,7 +1044,7 @@ function SmartSubstitution() {
                 <tr>
 
                   <th>
-                    NMC CODE
+                    MATERIAL CODE
                   </th>
 
                   <th>
@@ -1028,13 +1075,14 @@ function SmartSubstitution() {
 
               </thead>
 
+
               <tbody>
 
                 {filteredData.map(
                   (item, index) => (
 
                     <tr
-                      key={`${item.nmcCode}-${item.cpse}-${index}`}
+                      key={`${item.id}-${index}`}
                       onClick={() =>
                         setSelectedMaterial(
                           item
@@ -1042,15 +1090,17 @@ function SmartSubstitution() {
                       }
                     >
 
+
                       <td>
 
                         <span className="substitution-nmc-code">
 
-                          {item.nmcCode}
+                          {item.materialCode}
 
                         </span>
 
                       </td>
+
 
                       <td>
 
@@ -1066,6 +1116,7 @@ function SmartSubstitution() {
 
                       </td>
 
+
                       <td>
 
                         <span className="substitution-cpse">
@@ -1076,6 +1127,7 @@ function SmartSubstitution() {
 
                       </td>
 
+
                       <td>
 
                         <span className="substitution-specification">
@@ -1085,6 +1137,7 @@ function SmartSubstitution() {
                         </span>
 
                       </td>
+
 
                       <td>
 
@@ -1113,19 +1166,27 @@ function SmartSubstitution() {
 
                       </td>
 
+
                       <td>
-  <span
-    className={`substitution-compatibility ${
-      item.compatibility === "Compatible"
-        ? "compatible"
-        : item.compatibility === "Conditional"
-        ? "conditional"
-        : "incompatible"
-    }`}
-  >
-    {item.compatibility}
-  </span>
-</td>
+
+                        <span
+                          className={`substitution-compatibility ${
+                            item.compatibility ===
+                            "Compatible"
+                              ? "compatible"
+                              : item.compatibility ===
+                                "Conditional"
+                              ? "conditional"
+                              : "incompatible"
+                          }`}
+                        >
+
+                          {item.compatibility}
+
+                        </span>
+
+                      </td>
+
 
                       <td>
 
@@ -1161,8 +1222,9 @@ function SmartSubstitution() {
             </h3>
 
             <p>
-              Try another NMC code, material
-              name or filter combination.
+              Try another material code,
+              material name or filter
+              combination.
             </p>
 
           </div>
@@ -1178,8 +1240,8 @@ function SmartSubstitution() {
             </h3>
 
             <p>
-              Enter an NMC code or material
-              name above to view compatible
+              Enter a material code or
+              material name above to view
               alternatives across CPSEs.
             </p>
 
@@ -1188,6 +1250,7 @@ function SmartSubstitution() {
         )}
 
       </section>
+
 
       {/* =================================================
           DETAIL PANEL
@@ -1198,6 +1261,7 @@ function SmartSubstitution() {
         <div className="substitution-detail-overlay">
 
           <div className="substitution-detail-panel">
+
 
             <div className="substitution-detail-header">
 
@@ -1213,6 +1277,7 @@ function SmartSubstitution() {
 
               </div>
 
+
               <button
                 onClick={() =>
                   setSelectedMaterial(null)
@@ -1225,13 +1290,29 @@ function SmartSubstitution() {
 
             </div>
 
+
             <div className="substitution-detail-code">
 
-              {selectedMaterial.nmcCode}
+              {selectedMaterial.materialCode}
 
             </div>
 
+
             <div className="substitution-detail-grid">
+
+
+              <div>
+
+                <span>
+                  SOURCE MATERIAL
+                </span>
+
+                <strong>
+                  {selectedMaterial.sourceMaterial}
+                </strong>
+
+              </div>
+
 
               <div>
 
@@ -1245,6 +1326,7 @@ function SmartSubstitution() {
 
               </div>
 
+
               <div>
 
                 <span>
@@ -1257,6 +1339,7 @@ function SmartSubstitution() {
 
               </div>
 
+
               <div>
 
                 <span>
@@ -1268,6 +1351,7 @@ function SmartSubstitution() {
                 </strong>
 
               </div>
+
 
               <div>
 
@@ -1283,28 +1367,86 @@ function SmartSubstitution() {
 
               </div>
 
+
+              <div>
+
+                <span>
+                  MATCH SCORE
+                </span>
+
+                <strong>
+                  {(
+                    selectedMaterial.score *
+                    100
+                  ).toFixed(2)}
+                  %
+                </strong>
+
+              </div>
+
             </div>
 
-            <div className="substitution-detail-status">
 
-              <CheckCircle2 size={18} />
+            <div
+              className={`substitution-detail-status ${
+                selectedMaterial.compatibility ===
+                "Compatible"
+                  ? "compatible"
+                  : selectedMaterial.compatibility ===
+                    "Conditional"
+                  ? "conditional"
+                  : "incompatible"
+              }`}
+            >
+
+              {selectedMaterial.compatibility ===
+              "Compatible" ? (
+
+                <CheckCircle2 size={18} />
+
+              ) : (
+
+                <AlertTriangle size={18} />
+
+              )}
+
 
               <div>
 
                 <strong>
-                  Compatible Material
+
+                  {selectedMaterial.compatibility ===
+                  "Compatible"
+                    ? "Compatible Material"
+                    : selectedMaterial.compatibility ===
+                      "Conditional"
+                    ? "Conditional Compatibility"
+                    : "Incompatible Material"}
+
                 </strong>
 
+
                 <span>
-                  This material matches the
-                  required specification and can
-                  be considered as a substitution
-                  option.
+
+                  Backend decision:{" "}
+
+                  {selectedMaterial.decision}
+
+                  {" "}with a Splink score of{" "}
+
+                  {(
+                    selectedMaterial.score *
+                    100
+                  ).toFixed(2)}
+
+                  %.
+
                 </span>
 
               </div>
 
             </div>
+
 
             <div
               className={
@@ -1317,10 +1459,15 @@ function SmartSubstitution() {
 
               {selectedMaterial.availability ===
               "Available" ? (
+
                 <CheckCircle2 size={17} />
+
               ) : (
+
                 <AlertTriangle size={17} />
+
               )}
+
 
               <div>
 
@@ -1329,13 +1476,15 @@ function SmartSubstitution() {
                 </strong>
 
                 <span>
-                  Current availability status
-                  reported by {selectedMaterial.cpse}.
+                  Material record is available
+                  in the backend dataset from{" "}
+                  {selectedMaterial.cpse}.
                 </span>
 
               </div>
 
             </div>
+
 
             <button
               className="substitution-close-button"
@@ -1353,7 +1502,11 @@ function SmartSubstitution() {
       )}
 
     </div>
+
   );
+
 }
 
+
 export default SmartSubstitution;
+

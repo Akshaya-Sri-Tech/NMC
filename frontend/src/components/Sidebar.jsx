@@ -73,9 +73,9 @@ function Sidebar({
         </div>
 
         <div className="brand-text">
-          <strong>CPSE</strong>
-          <span>Material Intelligence</span>
-        </div>
+  <strong>Sangam_IN</strong>
+  <span>CPSE Material Intelligence</span>
+</div>
 
       </div>
 
@@ -145,8 +145,8 @@ function Sidebar({
         </div>
 
         <div className="version">
-          SIH • v1.0.0
-        </div>
+  Sangam_IN • v1.0.0
+</div>
 
       </div>
 

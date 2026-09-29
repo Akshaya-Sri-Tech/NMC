@@ -7,6 +7,11 @@ import Dashboard from "./components/Dashboard";
 import MaterialMapping from "./components/MaterialMapping";
 import Settings from "./components/Settings";
 import SmartSubstitution from "./components/SmartSubstitution";
+import Pending from "./components/Pending";
+import HumanCheck from "./components/HumanCheck";
+import DemandPrediction from "./components/DemandPrediction";
+import Login from "./components/Login";
+
 
 function App() {
   const [activePage, setActivePage] =
@@ -14,6 +19,8 @@ function App() {
 
   const [sidebarOpen, setSidebarOpen] =
     useState(true);
+
+    const [loggedIn, setLoggedIn] = useState(false);
 
   /* =========================================================
      GLOBAL SEARCH
@@ -65,33 +72,18 @@ const [globalSearchTrigger, setGlobalSearchTrigger] =
 
 
       case "Pending":
-        return (
-          <PlaceholderPage
-            title="Pending"
-            description="Materials awaiting processing and standardization."
-          />
-        );
+  return <Pending />;
 
 
       case "Human Check":
-        return (
-          <PlaceholderPage
-            title="Human Check"
-            description="Review AI-generated material mappings requiring human validation."
-          />
-        );
+  return <HumanCheck />;
 
 
       case "Price Anomaly Detection": return <PriceAnomaly />;
 
 
       case "Demand Prediction":
-        return (
-          <PlaceholderPage
-            title="Demand Prediction"
-            description="Predict future material demand using historical CPSE data."
-          />
-        );
+  return <DemandPrediction />;
 
 
       case "Smart Substitution Across CPSEs":
@@ -109,6 +101,15 @@ const [globalSearchTrigger, setGlobalSearchTrigger] =
   );
     }
   };
+  if (!loggedIn) {
+  return (
+    <Login
+      onLogin={() =>
+        setLoggedIn(true)
+      }
+    />
+  );
+}
 
 
   return (

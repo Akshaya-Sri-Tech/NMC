@@ -1,5 +1,5 @@
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   Search,
@@ -13,400 +13,23 @@ import {
   X,
 } from "lucide-react";
 
+import { getSampleMaterials } from "./api";
 
-/* =========================================================
-   DEMO PRICE DATA
-
-   Later this can be replaced with backend API data.
-========================================================= */
-
-const priceData = [
-  // =====================================================
-  // NMC-0001842 — Bearings
-  // =====================================================
-  {
-    id: 1,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "IOCL",
-    price: 1240,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 2,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "BHEL",
-    price: 1275,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 3,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "BPCL",
-    price: 1310,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 4,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "ONGC",
-    price: 1980,
-    unit: "Nos",
-    status: "Anomaly",
-  },
-  {
-    id: 5,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "IOCL",
-    price: 1420,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 6,
-    nmcCode: "NMC-0001842",
-    material: "Industrial Bearing",
-    cpse: "BHEL",
-    price: 1560,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 7,
-    nmcCode: "NMC-0001842",
-    material: "Ball Bearing",
-    cpse: "HPCL",
-    price: 1690,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 8,
-    nmcCode: "NMC-0001842",
-    material: "Bearing Assembly",
-    cpse: "ONGC",
-    price: 2450,
-    unit: "Nos",
-    status: "Anomaly",
-  },
-
-  // =====================================================
-  // NMC-0001843 — Pipes
-  // =====================================================
-  {
-    id: 9,
-    nmcCode: "NMC-0001843",
-    material: "Steel Pipe",
-    cpse: "ONGC",
-    price: 48500,
-    unit: "Meter",
-    status: "Normal",
-  },
-  {
-    id: 10,
-    nmcCode: "NMC-0001843",
-    material: "Steel Pipe",
-    cpse: "IOCL",
-    price: 49200,
-    unit: "Meter",
-    status: "Normal",
-  },
-  {
-    id: 11,
-    nmcCode: "NMC-0001843",
-    material: "Carbon Steel Pipe",
-    cpse: "BPCL",
-    price: 51500,
-    unit: "Meter",
-    status: "Normal",
-  },
-  {
-    id: 12,
-    nmcCode: "NMC-0001843",
-    material: "Seamless Pipe",
-    cpse: "HPCL",
-    price: 68200,
-    unit: "Meter",
-    status: "Anomaly",
-  },
-  {
-    id: 13,
-    nmcCode: "NMC-0001843",
-    material: "Process Pipe",
-    cpse: "ONGC",
-    price: 53800,
-    unit: "Meter",
-    status: "Normal",
-  },
-  {
-    id: 14,
-    nmcCode: "NMC-0001843",
-    material: "Steel Pipe",
-    cpse: "IOCL",
-    price: 55700,
-    unit: "Meter",
-    status: "Normal",
-  },
-  {
-    id: 15,
-    nmcCode: "NMC-0001843",
-    material: "Carbon Steel Pipe",
-    cpse: "BHEL",
-    price: 52100,
-    unit: "Meter",
-    status: "Normal",
-  },
-  {
-    id: 16,
-    nmcCode: "NMC-0001843",
-    material: "Industrial Pipe",
-    cpse: "BPCL",
-    price: 79500,
-    unit: "Meter",
-    status: "Anomaly",
-  },
-
-  // =====================================================
-  // NMC-0001844 — Valves
-  // =====================================================
-  {
-    id: 17,
-    nmcCode: "NMC-0001844",
-    material: "Industrial Valve",
-    cpse: "BPCL",
-    price: 8200,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 18,
-    nmcCode: "NMC-0001844",
-    material: "Industrial Valve",
-    cpse: "IOCL",
-    price: 8450,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 19,
-    nmcCode: "NMC-0001844",
-    material: "Gate Valve",
-    cpse: "ONGC",
-    price: 8700,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 20,
-    nmcCode: "NMC-0001844",
-    material: "Ball Valve",
-    cpse: "HPCL",
-    price: 12900,
-    unit: "Nos",
-    status: "Anomaly",
-  },
-  {
-    id: 21,
-    nmcCode: "NMC-0001844",
-    material: "Gate Valve",
-    cpse: "BPCL",
-    price: 9100,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 22,
-    nmcCode: "NMC-0001844",
-    material: "Industrial Valve",
-    cpse: "IOCL",
-    price: 9350,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 23,
-    nmcCode: "NMC-0001844",
-    material: "Ball Valve",
-    cpse: "ONGC",
-    price: 9750,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 24,
-    nmcCode: "NMC-0001844",
-    material: "Process Valve",
-    cpse: "BHEL",
-    price: 14600,
-    unit: "Nos",
-    status: "Anomaly",
-  },
-
-  // =====================================================
-  // NMC-0001845 — Pumps
-  // =====================================================
-  {
-    id: 25,
-    nmcCode: "NMC-0001845",
-    material: "Centrifugal Pump",
-    cpse: "NTPC",
-    price: 84500,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 26,
-    nmcCode: "NMC-0001845",
-    material: "Centrifugal Pump",
-    cpse: "BHEL",
-    price: 87200,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 27,
-    nmcCode: "NMC-0001845",
-    material: "Process Pump",
-    cpse: "IOCL",
-    price: 91800,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 28,
-    nmcCode: "NMC-0001845",
-    material: "Water Pump",
-    cpse: "ONGC",
-    price: 128500,
-    unit: "Nos",
-    status: "Anomaly",
-  },
-  {
-    id: 29,
-    nmcCode: "NMC-0001845",
-    material: "Centrifugal Pump",
-    cpse: "NTPC",
-    price: 96500,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 30,
-    nmcCode: "NMC-0001845",
-    material: "Process Pump",
-    cpse: "BHEL",
-    price: 101200,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 31,
-    nmcCode: "NMC-0001845",
-    material: "Industrial Pump",
-    cpse: "IOCL",
-    price: 98700,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 32,
-    nmcCode: "NMC-0001845",
-    material: "Centrifugal Pump",
-    cpse: "ONGC",
-    price: 151000,
-    unit: "Nos",
-    status: "Anomaly",
-  },
-
-  // =====================================================
-  // NMC-0001846 — Pressure Gauges
-  // =====================================================
-  {
-    id: 33,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "CPCL",
-    price: 3250,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 34,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "IOCL",
-    price: 3400,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 35,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "BPCL",
-    price: 3520,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 36,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "ONGC",
-    price: 4900,
-    unit: "Nos",
-    status: "Anomaly",
-  },
-  {
-    id: 37,
-    nmcCode: "NMC-0001846",
-    material: "Industrial Gauge",
-    cpse: "CPCL",
-    price: 4100,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 38,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "IOCL",
-    price: 3750,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 39,
-    nmcCode: "NMC-0001846",
-    material: "Process Gauge",
-    cpse: "BPCL",
-    price: 4280,
-    unit: "Nos",
-    status: "Normal",
-  },
-  {
-    id: 40,
-    nmcCode: "NMC-0001846",
-    material: "Pressure Gauge",
-    cpse: "ONGC",
-    price: 7200,
-    unit: "Nos",
-    status: "Anomaly",
-  },
-];
 
 /* =========================================================
    PRICE ANOMALY PAGE
 ========================================================= */
 
 function PriceAnomaly() {
+
+  const [priceData, setPriceData] = useState([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
 
   const [search, setSearch] =
     useState("");
@@ -425,6 +48,92 @@ function PriceAnomaly() {
 
   const [selectedMaterial, setSelectedMaterial] =
     useState(null);
+
+
+  /* =======================================================
+     LOAD BACKEND DATA
+  ======================================================= */
+
+  useEffect(() => {
+
+    getSampleMaterials()
+
+      .then((data) => {
+
+        const materials =
+          data.materials || [];
+
+        const formattedMaterials =
+          materials.map((item, index) => ({
+
+            id:
+              item.material_id ||
+              index + 1,
+
+            materialCode:
+              item.material_code ||
+              "—",
+
+            material:
+              item.material_description ||
+              "Unknown Material",
+
+            cpse:
+              item.cpse_code ||
+              "—",
+
+            cpseName:
+              item.cpse_name ||
+              "—",
+
+            price:
+              Number(
+                item.procurement_price_inr
+              ) || 0,
+
+            unit:
+              item.uom ||
+              "—",
+
+            category:
+              item.category ||
+              "—",
+
+            specification:
+              item.specification ||
+              "—",
+
+            unspsc:
+              item.unspsc_code ||
+              "—",
+
+          }));
+
+
+        setPriceData(
+          formattedMaterials
+        );
+
+        setLoading(false);
+
+      })
+
+      .catch((err) => {
+
+        console.error(
+          "Backend error:",
+          err
+        );
+
+        setError(
+          "Unable to load price data from backend."
+        );
+
+        setLoading(false);
+
+      });
+
+  }, []);
 
 
   /* =======================================================
@@ -469,17 +178,28 @@ function PriceAnomaly() {
 
     return priceData.filter((item) =>
 
-      item.nmcCode
+      item.materialCode
         .toLowerCase()
         .includes(searchLower) ||
 
       item.material
         .toLowerCase()
+        .includes(searchLower) ||
+
+      item.cpse
+        .toLowerCase()
+        .includes(searchLower) ||
+
+      item.cpseName
+        .toLowerCase()
         .includes(searchLower)
 
     );
 
-  }, [searchedValue]);
+  }, [
+    searchedValue,
+    priceData,
+  ]);
 
 
   /* =======================================================
@@ -488,12 +208,23 @@ function PriceAnomaly() {
 
   const dataWithAnomaly = useMemo(() => {
 
+    /*
+      Group materials by material category.
+
+      Since the backend does not currently provide
+      an NMC code, we use category as the comparison
+      group for price analysis.
+    */
+
     const grouped = {};
+
 
     searchedData.forEach((item) => {
 
       const key =
-        item.nmcCode;
+        item.category ||
+        item.material;
+
 
       if (!grouped[key]) {
         grouped[key] = [];
@@ -506,32 +237,47 @@ function PriceAnomaly() {
 
     return searchedData.map((item) => {
 
+      const key =
+        item.category ||
+        item.material;
+
       const group =
-        grouped[item.nmcCode];
+        grouped[key] || [item];
+
 
       const prices =
-        group.map(
-          (record) => record.price
-        );
+        group
+          .map(
+            (record) =>
+              Number(record.price) || 0
+          )
+          .filter(
+            (price) => price > 0
+          );
+
 
       const average =
-        prices.reduce(
-          (sum, price) =>
-            sum + price,
-          0
-        ) / prices.length;
+        prices.length > 0
+          ? prices.reduce(
+              (sum, price) =>
+                sum + price,
+              0
+            ) / prices.length
+          : 0;
 
 
       const deviation =
-        ((item.price - average) /
-          average) *
-        100;
+        average > 0
+          ? ((item.price - average) /
+              average) *
+            100
+          : 0;
 
 
       /*
         A price is considered anomalous
-        when it differs from the average
-        by more than 20%.
+        when it differs from the group
+        average by more than 20%.
       */
 
       const isAnomaly =
@@ -594,16 +340,25 @@ function PriceAnomaly() {
           cpseFilter === "All CPSEs" ||
           item.cpse === cpseFilter;
 
+
         const materialMatch =
           materialFilter === "All Materials" ||
           item.material === materialFilter;
 
+
         const anomalyMatch =
           anomalyFilter === "All" ||
-          (anomalyFilter === "Anomaly" &&
-            item.isAnomaly) ||
-          (anomalyFilter === "Normal" &&
-            !item.isAnomaly);
+
+          (
+            anomalyFilter === "Anomaly" &&
+            item.isAnomaly
+          ) ||
+
+          (
+            anomalyFilter === "Normal" &&
+            !item.isAnomaly
+          );
+
 
         return (
           cpseMatch &&
@@ -613,7 +368,6 @@ function PriceAnomaly() {
 
       })
 
-      /* LOWEST PRICE → HIGHEST PRICE */
       .sort(
         (a, b) =>
           a.price - b.price
@@ -684,10 +438,81 @@ function PriceAnomaly() {
 
 
   /* =======================================================
+     LOADING
+  ======================================================= */
+
+  if (loading) {
+
+    return (
+      <div className="price-anomaly-page">
+
+        <div className="price-page-header">
+
+          <div>
+
+            <div className="price-eyebrow">
+              PROCUREMENT INTELLIGENCE
+            </div>
+
+            <h2>
+              Price Anomaly Detection
+            </h2>
+
+            <p>
+              Loading material price records...
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+    );
+
+  }
+
+
+  /* =======================================================
+     ERROR
+  ======================================================= */
+
+  if (error) {
+
+    return (
+      <div className="price-anomaly-page">
+
+        <div className="price-page-header">
+
+          <div>
+
+            <div className="price-eyebrow">
+              PROCUREMENT INTELLIGENCE
+            </div>
+
+            <h2>
+              Price Anomaly Detection
+            </h2>
+
+            <p>
+              {error}
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+    );
+
+  }
+
+
+  /* =======================================================
      RENDER
   ======================================================= */
 
   return (
+
     <div className="price-anomaly-page">
 
 
@@ -734,8 +559,8 @@ function PriceAnomaly() {
             </h3>
 
             <span>
-              Search using an NMC code or
-              material name.
+              Search using a material code,
+              material name or CPSE.
             </span>
 
           </div>
@@ -757,7 +582,7 @@ function PriceAnomaly() {
                 )
               }
               onKeyDown={handleKeyDown}
-              placeholder="Enter NMC code or material name..."
+              placeholder="Enter material code, material name or CPSE..."
             />
 
           </div>
@@ -1057,7 +882,7 @@ function PriceAnomaly() {
                 <tr>
 
                   <th>
-                    NMC CODE
+                    MATERIAL CODE
                   </th>
 
                   <th>
@@ -1095,7 +920,7 @@ function PriceAnomaly() {
                   (item, index) => (
 
                     <tr
-                      key={`${item.nmcCode}-${item.cpse}-${index}`}
+                      key={`${item.materialCode}-${item.cpse}-${index}`}
                       className={
                         item.isAnomaly
                           ? "price-anomaly-row"
@@ -1111,7 +936,7 @@ function PriceAnomaly() {
                       <td>
 
                         <span className="price-nmc-code">
-                          {item.nmcCode}
+                          {item.materialCode}
                         </span>
 
                       </td>
@@ -1172,13 +997,17 @@ function PriceAnomaly() {
                               : "price-deviation"
                           }
                         >
+
                           {item.deviation >= 0
                             ? "+"
                             : ""}
+
                           {item.deviation.toFixed(
                             1
                           )}
+
                           %
+
                         </span>
 
                       </td>
@@ -1189,8 +1018,11 @@ function PriceAnomaly() {
                         {item.isAnomaly ? (
 
                           <span className="price-status anomaly">
+
                             <AlertTriangle size={12} />
+
                             Anomaly
+
                           </span>
 
                         ) : (
@@ -1225,8 +1057,9 @@ function PriceAnomaly() {
             </h3>
 
             <p>
-              Try another NMC code, material,
-              CPSE or filter combination.
+              Try another material code,
+              material, CPSE or filter
+              combination.
             </p>
 
           </div>
@@ -1274,42 +1107,67 @@ function PriceAnomaly() {
 
 
             <div className="price-detail-code">
-              {selectedMaterial.nmcCode}
+
+              {selectedMaterial.materialCode}
+
             </div>
 
 
             <div className="price-detail-grid">
 
               <div>
-                <span>CPSE</span>
+
+                <span>
+                  CPSE
+                </span>
+
                 <strong>
                   {selectedMaterial.cpse}
                 </strong>
+
               </div>
 
+
               <div>
-                <span>CATEGORY</span>
+
+                <span>
+                  CATEGORY
+                </span>
+
                 <strong>
                   {selectedMaterial.category}
                 </strong>
+
               </div>
 
+
               <div>
-                <span>PRICE</span>
+
+                <span>
+                  PRICE
+                </span>
+
                 <strong>
                   {formatPrice(
                     selectedMaterial.price
                   )}
                 </strong>
+
               </div>
 
+
               <div>
-                <span>AVERAGE PRICE</span>
+
+                <span>
+                  AVERAGE PRICE
+                </span>
+
                 <strong>
                   {formatPrice(
                     selectedMaterial.average
                   )}
                 </strong>
+
               </div>
 
             </div>
@@ -1324,30 +1182,43 @@ function PriceAnomaly() {
             >
 
               {selectedMaterial.isAnomaly ? (
+
                 <>
+
                   <AlertTriangle size={18} />
 
                   <div>
+
                     <strong>
                       Price Anomaly Detected
                     </strong>
 
                     <span>
+
                       This price differs from
-                      the calculated CPSE average
-                      by{" "}
+                      the calculated comparison
+                      average by{" "}
+
                       {Math.abs(
                         selectedMaterial.deviation
                       ).toFixed(1)}
+
                       %.
+
                     </span>
+
                   </div>
+
                 </>
+
               ) : (
+
                 <>
+
                   <Package size={18} />
 
                   <div>
+
                     <strong>
                       Price Within Normal Range
                     </strong>
@@ -1356,8 +1227,11 @@ function PriceAnomaly() {
                       No significant price
                       deviation detected.
                     </span>
+
                   </div>
+
                 </>
+
               )}
 
             </div>
@@ -1379,10 +1253,10 @@ function PriceAnomaly() {
       )}
 
     </div>
+
   );
+
 }
 
 
 export default PriceAnomaly;
-
-
