@@ -15925,3 +15925,771 @@ textarea:focus-visible {
   }
 }
 
+
+
+/* =========================================================
+   MASTER DATABASE
+========================================================= */
+
+.master-db-page {
+  padding: 28px 32px 40px;
+  color: #172b3a;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.master-db-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.master-db-eyebrow {
+  margin-bottom: 6px;
+  color: #1769aa;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.master-db-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.master-db-title-row svg {
+  color: #1769aa;
+}
+
+.master-db-title-row h2 {
+  margin: 0;
+  font-size: 27px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.master-db-header p {
+  margin: 7px 0 0;
+  color: #68747e;
+  font-size: 13px;
+}
+
+.master-db-record-count {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 145px;
+  padding: 12px 15px;
+  border: 1px solid #d8dee3;
+  background: #ffffff;
+}
+
+.master-db-record-count span {
+  color: #78848d;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.master-db-record-count strong {
+  color: #1769aa;
+  font-size: 22px;
+  font-weight: 750;
+}
+
+
+/* =========================================================
+   FILTER PANEL
+========================================================= */
+
+.master-db-filter-panel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  margin-bottom: 20px;
+  border: 1px solid #d8dee3;
+  background: #ffffff;
+}
+
+.master-db-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+  min-width: 280px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #cfd7dd;
+  background: #f9fafb;
+}
+
+.master-db-search:focus-within {
+  border-color: #1769aa;
+  background: #ffffff;
+}
+
+.master-db-search svg {
+  flex-shrink: 0;
+  color: #7b8791;
+}
+
+.master-db-search input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #172b3a;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.master-db-search input::placeholder {
+  color: #8a949c;
+}
+
+.master-db-filter {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 170px;
+  height: 40px;
+  padding: 0 35px 0 11px;
+  border: 1px solid #cfd7dd;
+  background: #ffffff;
+}
+
+.master-db-filter > svg:first-child {
+  flex-shrink: 0;
+  color: #667580;
+}
+
+.master-db-filter > svg:last-child {
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+  color: #7b8791;
+}
+
+.master-db-filter select {
+  width: 100%;
+  border: none;
+  outline: none;
+  appearance: none;
+  background: transparent;
+  color: #40515d;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.master-db-reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 13px;
+  border: 1px solid #cfd7dd;
+  background: #ffffff;
+  color: #56646e;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.master-db-reset:hover {
+  border-color: #1769aa;
+  color: #1769aa;
+  background: #f6f9fb;
+}
+
+
+/* =========================================================
+   TABLE SECTION
+========================================================= */
+
+.master-db-table-section {
+  border: 1px solid #d8dee3;
+  background: #ffffff;
+}
+
+.master-db-table-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 17px 20px;
+  border-bottom: 1px solid #d8dee3;
+  background: #f8fafb;
+}
+
+.master-db-table-eyebrow {
+  margin-bottom: 4px;
+  color: #1769aa;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.master-db-table-heading h3 {
+  margin: 0;
+  color: #172b3a;
+  font-size: 16px;
+  font-weight: 750;
+}
+
+.master-db-result-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #77838c;
+  font-size: 11px;
+}
+
+.master-db-result-info svg {
+  color: #1769aa;
+}
+
+.master-db-result-info strong {
+  color: #172b3a;
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.master-db-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.master-db-table {
+  width: 100%;
+  min-width: 1350px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+
+/* =========================================================
+   GROUP HEADERS
+========================================================= */
+
+.master-db-group-row th {
+  height: 42px;
+  padding: 0 14px;
+  border-bottom: 1px solid #cfd8de;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-align: left;
+}
+
+.master-db-group-row th > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.master-db-cpse-group {
+  background: #edf4f8;
+  color: #1769aa;
+  border-right: 1px solid #cfd8de;
+}
+
+.master-db-nmc-group {
+  background: #f1f4f6;
+  color: #405766;
+}
+
+
+/* =========================================================
+   COLUMN HEADERS
+========================================================= */
+
+.master-db-column-row th {
+  padding: 11px 13px;
+  border-bottom: 1px solid #d8dee3;
+  background: #f8fafb;
+  color: #68747e;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.055em;
+  line-height: 1.35;
+  text-align: left;
+  vertical-align: middle;
+}
+
+
+/* Column widths */
+
+.master-db-table th:nth-child(1),
+.master-db-table td:nth-child(1) {
+  width: 105px;
+}
+
+.master-db-table th:nth-child(2),
+.master-db-table td:nth-child(2) {
+  width: 135px;
+}
+
+.master-db-table th:nth-child(3),
+.master-db-table td:nth-child(3) {
+  width: 205px;
+}
+
+.master-db-table th:nth-child(4),
+.master-db-table td:nth-child(4) {
+  width: 190px;
+}
+
+.master-db-table th:nth-child(5),
+.master-db-table td:nth-child(5) {
+  width: 105px;
+}
+
+.master-db-table th:nth-child(6),
+.master-db-table td:nth-child(6) {
+  width: 135px;
+}
+
+.master-db-table th:nth-child(7),
+.master-db-table td:nth-child(7) {
+  width: 205px;
+}
+
+.master-db-table th:nth-child(8),
+.master-db-table td:nth-child(8) {
+  width: 190px;
+}
+
+.master-db-table th:nth-child(9),
+.master-db-table td:nth-child(9) {
+  width: 105px;
+}
+
+
+/* =========================================================
+   TABLE CELLS
+========================================================= */
+
+.master-db-table td {
+  padding: 13px;
+  border-bottom: 1px solid #edf0f2;
+  color: #40515d;
+  font-size: 11px;
+  line-height: 1.45;
+  vertical-align: middle;
+}
+
+.master-db-table tbody tr:hover {
+  background: #fafcfd;
+}
+
+.master-db-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+
+/* =========================================================
+   CPSE
+========================================================= */
+
+.master-db-cpse {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #40515d;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.master-db-cpse svg {
+  color: #1769aa;
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   MATERIAL CODE
+========================================================= */
+
+.master-db-material-code {
+  display: inline-flex;
+  padding: 5px 7px;
+  background: #edf4f8;
+  border: 1px solid #d5e2eb;
+  color: #1769aa;
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   MATERIAL DESCRIPTION
+========================================================= */
+
+.master-db-description {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+}
+
+.master-db-description svg {
+  margin-top: 2px;
+  flex-shrink: 0;
+  color: #1769aa;
+}
+
+.master-db-description strong {
+  color: #263b49;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   SPECIFICATION
+========================================================= */
+
+.master-db-spec {
+  display: block;
+  color: #68747e;
+}
+
+
+/* =========================================================
+   CPSE CATEGORY
+========================================================= */
+
+.master-db-category {
+  display: inline-flex;
+  padding: 4px 7px;
+  background: #f2f5f6;
+  color: #52616b;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+
+/* =========================================================
+   NMC CODE
+========================================================= */
+
+.master-db-nmc-code {
+  display: inline-flex;
+  padding: 5px 7px;
+  background: #eef4f8;
+  border: 1px solid #d2e0e8;
+  color: #12598f;
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   STANDARD DESCRIPTION
+========================================================= */
+
+.master-db-standard-description {
+  display: block;
+  color: #263b49;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+
+/* =========================================================
+   STANDARD SPECIFICATION
+========================================================= */
+
+.master-db-standard-spec {
+  display: block;
+  color: #68747e;
+}
+
+
+/* =========================================================
+   NMC CATEGORY
+========================================================= */
+
+.master-db-nmc-category {
+  display: inline-flex;
+  padding: 4px 7px;
+  background: #f2f5f6;
+  color: #52616b;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.master-db-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+  padding: 30px;
+  text-align: center;
+}
+
+.master-db-empty > svg {
+  margin-bottom: 10px;
+  color: #1769aa;
+}
+
+.master-db-empty h3 {
+  margin: 0;
+  color: #172b3a;
+  font-size: 15px;
+}
+
+.master-db-empty p {
+  max-width: 420px;
+  margin: 7px 0 15px;
+  color: #78848d;
+  font-size: 12px;
+}
+
+.master-db-empty button {
+  padding: 9px 13px;
+  border: 1px solid #1769aa;
+  background: #1769aa;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.master-db-empty button:hover {
+  background: #12598f;
+}
+
+
+/* =========================================================
+   FOOTER NOTE
+========================================================= */
+
+.master-db-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 12px;
+  color: #7b8790;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.master-db-note svg {
+  margin-top: 1px;
+  flex-shrink: 0;
+  color: #1769aa;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+  .master-db-filter-panel {
+    flex-wrap: wrap;
+  }
+
+  .master-db-search {
+    flex-basis: 100%;
+  }
+
+  .master-db-filter {
+    flex: 1;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .master-db-page {
+    padding: 20px 16px 30px;
+  }
+
+  .master-db-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .master-db-record-count {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .master-db-filter {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .master-db-reset {
+    width: 100%;
+  }
+
+  .master-db-table-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+}
+
+/* =========================================================
+   PENDING HUMAN VALIDATION ACTIONS
+========================================================= */
+
+.pending-action-area {
+  margin-top: 24px;
+  padding-top: 20px;
+
+  border-top: 1px solid #d8dee3;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 24px;
+}
+
+.pending-action-info {
+  flex: 1;
+}
+
+.pending-action-info strong {
+  display: block;
+
+  margin-bottom: 5px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  color: #172b3a;
+}
+
+.pending-action-info p {
+  margin: 0;
+
+  font-size: 12px;
+  line-height: 1.5;
+
+  color: #64748b;
+}
+
+.pending-action-buttons {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  flex-shrink: 0;
+}
+
+.pending-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  min-width: 145px;
+  height: 40px;
+
+  padding: 0 16px;
+
+  border: 1px solid transparent;
+  border-radius: 5px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.pending-action-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* APPROVE */
+
+.pending-action-button.approve {
+  background: #1769aa;
+  border-color: #1769aa;
+
+  color: #ffffff;
+}
+
+.pending-action-button.approve:hover:not(:disabled) {
+  background: #12598f;
+  border-color: #12598f;
+}
+
+
+/* REJECT */
+
+.pending-action-button.reject {
+  background: #ffffff;
+  border-color: #cbd5df;
+
+  color: #b42318;
+}
+
+.pending-action-button.reject:hover:not(:disabled) {
+  background: #fef2f2;
+  border-color: #e2a5a0;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+  .pending-action-area {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pending-action-buttons {
+    width: 100%;
+  }
+
+  .pending-action-button {
+    flex: 1;
+  }
+
+}
+

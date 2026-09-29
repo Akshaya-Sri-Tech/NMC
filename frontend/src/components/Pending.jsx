@@ -11,10 +11,13 @@ import {
   Package,
   Gauge,
   GitCompare,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 
 import {
   getHumanEvaluations,
+  updateHumanEvaluation,
 } from "./api";
 
 
@@ -44,12 +47,6 @@ function Pending() {
 
   /* =========================================================
      LOAD PENDING EVALUATIONS FROM SIH BACKEND
-     
-     IMPORTANT:
-     This page does NOT run the AI/ML pipeline.
-     
-     It simply reads the existing PENDING records
-     created by the backend.
   ========================================================= */
 
   useEffect(() => {
@@ -65,21 +62,6 @@ function Pending() {
           await getHumanEvaluations();
 
 
-        /*
-          Backend may return either:
-
-          [
-            {...},
-            {...}
-          ]
-
-          OR:
-
-          {
-            evaluations: [...]
-          }
-        */
-
         const evaluations =
           Array.isArray(response)
             ? response
@@ -87,7 +69,7 @@ function Pending() {
 
 
         /* =====================================================
-           CONVERT BACKEND EVALUATIONS INTO FRONTEND RECORDS
+           CONVERT BACKEND EVALUATIONS
         ===================================================== */
 
         const formattedResults =
@@ -97,9 +79,7 @@ function Pending() {
             let rightAttributes = {};
 
 
-            /* ===============================================
-               PARSE LEFT ATTRIBUTES
-            =============================================== */
+            /* LEFT ATTRIBUTES */
 
             try {
 
@@ -117,9 +97,7 @@ function Pending() {
             }
 
 
-            /* ===============================================
-               PARSE RIGHT ATTRIBUTES
-            =============================================== */
+            /* RIGHT ATTRIBUTES */
 
             try {
 
@@ -137,40 +115,24 @@ function Pending() {
             }
 
 
-            /* ===============================================
-               RETURN FRONTEND RECORD
-            =============================================== */
-
             return {
 
-              /*
-                evaluation_id is the actual unique
-                identifier for this human evaluation.
-              */
+              /* EVALUATION */
+
               id:
                 item.evaluation_id,
 
 
-              /*
-                These are PRODUCT IDs from the
-                human-evaluation backend.
+              /* SOURCE */
 
-                They are NOT NMC codes.
-              */
               materialId:
                 item.left_product_id || "-",
 
               materialCode:
                 item.left_product_id || "-",
 
-
-              /* SOURCE MATERIAL */
-
               material:
                 item.left_material_desc || "-",
-
-
-              /* CPSE */
 
               cpse:
                 item.left_cpse || "-",
@@ -179,21 +141,17 @@ function Pending() {
                 item.left_cpse || "-",
 
 
-              /* CATEGORY */
-
               category:
                 leftAttributes.product_type ||
                 leftAttributes.material_group ||
                 "-",
 
 
-              /* TECHNICAL DESCRIPTION */
-
               specification:
                 item.left_technical_desc || "-",
 
 
-              /* CANDIDATE MATERIAL */
+              /* CANDIDATE */
 
               candidateMaterialCode:
                 item.right_product_id || "-",
@@ -201,17 +159,12 @@ function Pending() {
               candidateMaterial:
                 item.right_material_desc || "-",
 
-
-              /* CANDIDATE CPSE */
-
               candidateCPSE:
                 item.right_cpse || "-",
 
               candidateCPSEName:
                 item.right_cpse || "-",
 
-
-              /* CANDIDATE TECHNICAL DESCRIPTION */
 
               candidateSpecification:
                 item.right_technical_desc || "-",
@@ -230,15 +183,11 @@ function Pending() {
                 ),
 
 
-              /*
-                Current backend GET endpoint returns
-                pending evaluations.
+              /* STATUS */
 
-                Therefore status is the important
-                field for this page.
-              */
               status:
                 item.status || "PENDING",
+
 
               decision:
                 item.status || "PENDING",
@@ -274,10 +223,14 @@ function Pending() {
               /* MATCH EXPLANATION */
 
               similarities:
-                item.similarities || [],
+                Array.isArray(item.similarities)
+                  ? item.similarities
+                  : [],
 
               differences:
-                item.differences || [],
+                Array.isArray(item.differences)
+                  ? item.differences
+                  : [],
 
             };
 
@@ -288,22 +241,23 @@ function Pending() {
           formattedResults
         );
 
+      }
 
-      } catch (err) {
+      catch (err) {
 
         console.error(
           "Failed to load pending evaluations:",
           err
         );
 
-
         setError(
           err.message ||
           "Unable to load pending materials."
         );
 
+      }
 
-      } finally {
+      finally {
 
         setLoading(false);
 
@@ -318,6 +272,216 @@ function Pending() {
 
 
   /* =========================================================
+     HUMAN VALIDATION
+  ========================================================= */
+
+  const handleDecision = async (
+    decision
+  ) => {
+
+    if (!selectedItem) {
+      return;
+    }
+
+
+    try {
+
+      setLoading(true);
+
+
+      await updateHumanEvaluation(
+        selectedItem.id,
+        decision
+      );
+
+
+      alert(
+        decision === "MATCH"
+          ? "Match approved successfully."
+          : "Match rejected successfully."
+      );
+
+
+      setSelectedItem(null);
+
+
+      /*
+        Reload the pending records.
+
+        The backend GET endpoint only returns
+        PENDING evaluations.
+
+        Therefore the completed record will
+        disappear from this page.
+      */
+
+      const response =
+        await getHumanEvaluations();
+
+
+      const evaluations =
+        Array.isArray(response)
+          ? response
+          : response.evaluations || [];
+
+
+      const formattedResults =
+        evaluations.map((item) => {
+
+          let leftAttributes = {};
+          let rightAttributes = {};
+
+
+          try {
+
+            leftAttributes =
+              typeof item.left_attributes === "string"
+                ? JSON.parse(
+                    item.left_attributes
+                  )
+                : item.left_attributes || {};
+
+          } catch {
+
+            leftAttributes = {};
+
+          }
+
+
+          try {
+
+            rightAttributes =
+              typeof item.right_attributes === "string"
+                ? JSON.parse(
+                    item.right_attributes
+                  )
+                : item.right_attributes || {};
+
+          } catch {
+
+            rightAttributes = {};
+
+          }
+
+
+          return {
+
+            id:
+              item.evaluation_id,
+
+            materialId:
+              item.left_product_id || "-",
+
+            materialCode:
+              item.left_product_id || "-",
+
+            material:
+              item.left_material_desc || "-",
+
+            cpse:
+              item.left_cpse || "-",
+
+            cpseName:
+              item.left_cpse || "-",
+
+            category:
+              leftAttributes.product_type ||
+              leftAttributes.material_group ||
+              "-",
+
+            specification:
+              item.left_technical_desc || "-",
+
+            candidateMaterialCode:
+              item.right_product_id || "-",
+
+            candidateMaterial:
+              item.right_material_desc || "-",
+
+            candidateCPSE:
+              item.right_cpse || "-",
+
+            candidateCPSEName:
+              item.right_cpse || "-",
+
+            candidateSpecification:
+              item.right_technical_desc || "-",
+
+            score:
+              Number(
+                item.splink_score || 0
+              ),
+
+            matchWeight:
+              Number(
+                item.splink_match_weight || 0
+              ),
+
+            status:
+              item.status || "PENDING",
+
+            decision:
+              item.status || "PENDING",
+
+            technicalDescription:
+              item.left_technical_desc || "",
+
+            candidateTechnicalDescription:
+              item.right_technical_desc || "",
+
+            unspsc:
+              item.left_unspsc || "-",
+
+            candidateUNSPSC:
+              item.right_unspsc || "-",
+
+            attributes:
+              leftAttributes,
+
+            candidateAttributes:
+              rightAttributes,
+
+            similarities:
+              Array.isArray(item.similarities)
+                ? item.similarities
+                : [],
+
+            differences:
+              Array.isArray(item.differences)
+                ? item.differences
+                : [],
+
+          };
+
+        });
+
+
+      setPendingData(
+        formattedResults
+      );
+
+    }
+
+    catch (err) {
+
+      console.error(
+        "Failed to update evaluation:",
+        err
+      );
+
+      alert(
+        err.message ||
+        "Failed to update human evaluation."
+      );
+
+      setLoading(false);
+
+    }
+
+  };
+
+
+  /* =========================================================
      CPSE FILTER OPTIONS
   ========================================================= */
 
@@ -325,9 +489,16 @@ function Pending() {
 
     const values = [
       ...new Set(
-        pendingData.map(
-          (item) => item.cpse
-        )
+        pendingData
+          .map(
+            (item) =>
+              item.cpse
+          )
+          .filter(
+            (cpse) =>
+              cpse &&
+              cpse !== "-"
+          )
       ),
     ];
 
@@ -348,9 +519,11 @@ function Pending() {
 
     const values = [
       ...new Set(
-        pendingData.map(
-          (item) => item.status
-        )
+        pendingData
+          .map(
+            (item) =>
+              item.status
+          )
       ),
     ];
 
@@ -377,7 +550,6 @@ function Pending() {
 
     return pendingData.filter(
       (item) => {
-
 
         const matchesSearch =
           !search ||
@@ -827,7 +999,6 @@ function Pending() {
 
           <table className="pending-table">
 
-
             <thead>
 
               <tr>
@@ -874,7 +1045,6 @@ function Pending() {
                     key={item.id}
                   >
 
-
                     {/* PRODUCT ID */}
 
                     <td>
@@ -898,7 +1068,6 @@ function Pending() {
                           {item.material}
                         </strong>
 
-
                         <small>
                           {item.category}
                         </small>
@@ -915,7 +1084,6 @@ function Pending() {
                       <div className="pending-cpse">
 
                         <Building2 size={15} />
-
 
                         <span>
                           {item.cpse}
@@ -935,7 +1103,6 @@ function Pending() {
                         <strong>
                           {item.candidateMaterialCode}
                         </strong>
-
 
                         <small>
                           {item.candidateMaterial}
@@ -1049,13 +1216,11 @@ function Pending() {
 
             <div className="pending-detail-header">
 
-
               <div>
 
                 <span>
                   MATERIAL REVIEW
                 </span>
-
 
                 <h2>
                   {selectedItem.materialCode}
@@ -1084,7 +1249,6 @@ function Pending() {
 
             <div className="pending-detail-section">
 
-
               <div className="pending-section-title">
 
                 <Package size={17} />
@@ -1095,7 +1259,6 @@ function Pending() {
 
 
               <div className="pending-detail-grid">
-
 
                 <div>
 
@@ -1159,7 +1322,6 @@ function Pending() {
 
             <div className="pending-detail-section">
 
-
               <div className="pending-section-title">
 
                 <GitCompare size={17} />
@@ -1170,7 +1332,6 @@ function Pending() {
 
 
               <div className="pending-detail-grid">
-
 
                 <div>
 
@@ -1234,7 +1395,6 @@ function Pending() {
 
             <div className="pending-detail-section">
 
-
               <div className="pending-section-title">
 
                 <Gauge size={17} />
@@ -1245,7 +1405,6 @@ function Pending() {
 
 
               <div className="pending-match-grid">
-
 
                 <div>
 
@@ -1313,7 +1472,6 @@ function Pending() {
 
             <div className="pending-detail-section">
 
-
               <div className="pending-section-title">
 
                 Technical Details
@@ -1323,13 +1481,11 @@ function Pending() {
 
               <div className="pending-technical">
 
-
                 <div>
 
                   <label>
                     Source Technical Description
                   </label>
-
 
                   <p>
                     {selectedItem.technicalDescription ||
@@ -1345,7 +1501,6 @@ function Pending() {
                     Candidate Technical Description
                   </label>
 
-
                   <p>
                     {selectedItem.candidateTechnicalDescription ||
                       "Not available"}
@@ -1359,99 +1514,175 @@ function Pending() {
 
 
             {/* =================================================
-    SIMILARITIES
-================================================= */}
+                SIMILARITIES
+            ================================================= */}
 
-<div className="pending-detail-section">
+            <div className="pending-detail-section">
 
-  <div className="pending-section-title">
-    Matching Similarities
-  </div>
+              <div className="pending-section-title">
 
-  {selectedItem.similarities?.length > 0 ? (
+                Matching Similarities
 
-    <div className="pending-comparison-list">
+              </div>
 
-      {selectedItem.similarities.map(
-        (similarity, index) => (
 
-          <div
-            className="pending-comparison-item similarity"
-            key={index}
-          >
+              {selectedItem.similarities?.length > 0 ? (
 
-            <div className="pending-comparison-marker">
-              ✓
+                <div className="pending-comparison-list">
+
+                  {selectedItem.similarities.map(
+                    (similarity, index) => (
+
+                      <div
+                        className="pending-comparison-item similarity"
+                        key={index}
+                      >
+
+                        <div className="pending-comparison-marker">
+                          ✓
+                        </div>
+
+                        <p>
+                          {similarity}
+                        </p>
+
+                      </div>
+
+                    )
+                  )}
+
+                </div>
+
+              ) : (
+
+                <div className="pending-no-comparison">
+
+                  No matching similarities identified.
+
+                </div>
+
+              )}
+
             </div>
-
-            <p>
-              {similarity}
-            </p>
-
-          </div>
-
-        )
-      )}
-
-    </div>
-
-  ) : (
-
-    <div className="pending-no-comparison">
-      No matching similarities identified.
-    </div>
-
-  )}
-
-</div>
 
 
             {/* =================================================
-    DIFFERENCES
-================================================= */}
+                DIFFERENCES
+            ================================================= */}
 
-<div className="pending-detail-section">
+            <div className="pending-detail-section">
 
-  <div className="pending-section-title">
-    Identified Differences
-  </div>
+              <div className="pending-section-title">
 
-  {selectedItem.differences?.length > 0 ? (
+                Identified Differences
 
-    <div className="pending-comparison-list">
+              </div>
 
-      {selectedItem.differences.map(
-        (difference, index) => (
 
-          <div
-            className="pending-comparison-item difference"
-            key={index}
-          >
+              {selectedItem.differences?.length > 0 ? (
 
-            <div className="pending-comparison-marker">
-              !
+                <div className="pending-comparison-list">
+
+                  {selectedItem.differences.map(
+                    (difference, index) => (
+
+                      <div
+                        className="pending-comparison-item difference"
+                        key={index}
+                      >
+
+                        <div className="pending-comparison-marker">
+                          !
+                        </div>
+
+                        <p>
+                          {difference}
+                        </p>
+
+                      </div>
+
+                    )
+                  )}
+
+                </div>
+
+              ) : (
+
+                <div className="pending-no-comparison">
+
+                  No significant differences identified.
+
+                </div>
+
+              )}
+
             </div>
 
-            <p>
-              {difference}
-            </p>
 
-          </div>
+            {/* =================================================
+                HUMAN VALIDATION ACTIONS
+            ================================================= */}
 
-        )
-      )}
+            <div className="pending-action-area">
 
-    </div>
+              <div className="pending-action-info">
 
-  ) : (
+                <strong>
+                  Human Validation Required
+                </strong>
 
-    <div className="pending-no-comparison">
-      No significant differences identified.
-    </div>
+                <p>
+                  Review the source and candidate
+                  material details before confirming
+                  the AI match.
+                </p>
 
-  )}
+              </div>
 
-</div>
+
+              <div className="pending-action-buttons">
+
+                {/* APPROVE */}
+
+                <button
+                  className="pending-action-button approve"
+                  onClick={() =>
+                    handleDecision("MATCH")
+                  }
+                  disabled={loading}
+                >
+
+                  <CheckCircle2 size={17} />
+
+                  {loading
+                    ? "Updating..."
+                    : "Approve Match"}
+
+                </button>
+
+
+                {/* REJECT */}
+
+                <button
+                  className="pending-action-button reject"
+                  onClick={() =>
+                    handleDecision("NOT A MATCH")
+                  }
+                  disabled={loading}
+                >
+
+                  <XCircle size={17} />
+
+                  {loading
+                    ? "Updating..."
+                    : "Reject Match"}
+
+                </button>
+
+              </div>
+
+            </div>
+
 
           </div>
 

@@ -1,3 +1,4 @@
+
 import {
   LayoutDashboard,
   Hash,
@@ -9,6 +10,7 @@ import {
   Repeat2,
   Settings,
   Database,
+  Table2,
 } from "lucide-react";
 
 const menuItems = [
@@ -18,20 +20,21 @@ const menuItems = [
   },
   {
     name: "SAP Integration",
-    icon: Database
+    icon: Database,
   },
   {
     name: "NMC Code",
     icon: Hash,
   },
   {
+    name: "Master Database",
+    icon: Table2,
+  },
+  {
     name: "Pending",
     icon: Clock3,
   },
-  {
-    name: "Human Check",
-    icon: UserCheck,
-  },
+ 
   {
     name: "Material Map Across India",
     icon: Map,
@@ -61,8 +64,9 @@ function Sidebar({
 }) {
   return (
     <aside
-      className={`sidebar ${sidebarOpen ? "open" : "closed"
-        }`}
+      className={`sidebar ${
+        sidebarOpen ? "open" : "closed"
+      }`}
     >
 
       {/* =================================================
@@ -100,10 +104,11 @@ function Sidebar({
           return (
             <button
               key={item.name}
-              className={`nav-item ${activePage === item.name
+              className={`nav-item ${
+                activePage === item.name
                   ? "active"
                   : ""
-                }`}
+              }`}
               onClick={() =>
                 setActivePage(item.name)
               }
@@ -135,6 +140,7 @@ function Sidebar({
           <span className="status-dot"></span>
 
           <div>
+
             <strong>
               System Operational
             </strong>
@@ -142,6 +148,7 @@ function Sidebar({
             <small>
               All services running
             </small>
+
           </div>
 
         </div>

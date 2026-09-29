@@ -8,10 +8,11 @@ import MaterialMapping from "./components/MaterialMapping";
 import Settings from "./components/Settings";
 import SmartSubstitution from "./components/SmartSubstitution";
 import Pending from "./components/Pending";
-import HumanCheck from "./components/HumanCheck";
+
 import DemandPrediction from "./components/DemandPrediction";
 import Login from "./components/Login";
 import SAPIntegration from "./components/SAPIntegration.jsx";
+import MasterDB from "./components/MasterDB";
 
 
 function App() {
@@ -72,13 +73,14 @@ const [globalSearchTrigger, setGlobalSearchTrigger] =
 
       case "NMC Code": return <NMCCode />;
 
+      case "Master Database":
+  return <MasterDB />;
+
 
       case "Pending":
   return <Pending />;
 
 
-      case "Human Check":
-  return <HumanCheck />;
 
 
       case "Price Anomaly Detection": return <PriceAnomaly />;
