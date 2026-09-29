@@ -13808,7 +13808,6 @@ textarea:focus-visible {
   font-size: 13px;
   color: #687684;
 }
-<<<<<<< Updated upstream
 /* =========================================================
    SAP INTEGRATION
    ========================================================= */
@@ -13915,12 +13914,12 @@ textarea:focus-visible {
 
   font-size: 12.5px;
   line-height: 1.4;
-=======
+
 
 
 /* =========================================================
    NMC RESULT CARD
-   ========================================================= */
+========================================================= */
 
 .nmc-result-card {
   display: flex;
@@ -13937,13 +13936,12 @@ textarea:focus-visible {
 
 /* =========================================================
    RESULT CARD MAIN
-   ========================================================= */
+========================================================= */
 
 .nmc-result-card-main {
   flex: 1;
   min-width: 0;
 }
-
 
 .nmc-result-code-label {
   margin-bottom: 6px;
@@ -13952,7 +13950,6 @@ textarea:focus-visible {
   letter-spacing: 0.08em;
   color: #6b7780;
 }
-
 
 .nmc-result-code-button {
   display: inline-flex;
@@ -13970,30 +13967,25 @@ textarea:focus-visible {
   transition: color 0.15s ease;
 }
 
-
 .nmc-result-code-button:hover {
   color: #0f4f82;
 }
 
-
 .nmc-result-code-button svg:last-child {
   margin-left: 3px;
 }
-
 
 .nmc-result-card-description {
   margin: 7px 0 0;
   font-size: 13px;
   line-height: 1.5;
   color: #66737d;
->>>>>>> Stashed changes
 }
 
 
 /* =========================================================
-<<<<<<< Updated upstream
    CPSE SELECT
-   ========================================================= */
+========================================================= */
 
 .cpse-select-wrapper {
   width: 100%;
@@ -14004,11 +13996,8 @@ textarea:focus-visible {
 .sync-action label,
 .file-selector label {
   display: block;
-
   margin-bottom: 6px;
-
   color: #475569;
-
   font-size: 12px;
   font-weight: 600;
   line-height: 1.3;
@@ -14022,22 +14011,15 @@ textarea:focus-visible {
 .select-container select {
   width: 100%;
   height: 42px;
-
   box-sizing: border-box;
-
   padding: 0 40px 0 13px;
-
   border: 1px solid #cbd5e1;
   border-radius: 7px;
-
   background: #ffffff;
-
   color: #0f172a;
   font-size: 13px;
-
   appearance: none;
   -webkit-appearance: none;
-
   cursor: pointer;
   outline: none;
 }
@@ -14048,27 +14030,25 @@ textarea:focus-visible {
 
 .select-container select:focus {
   border-color: #2563eb;
-
   box-shadow:
     0 0 0 2px rgba(37, 99, 235, 0.08);
 }
 
 .select-container svg {
   position: absolute;
-
   right: 13px;
   top: 50%;
-
   width: 18px;
   height: 18px;
-
   transform: translateY(-50%);
-
   color: #64748b;
+  pointer-events: none;
+}
 
-=======
+
+/* =========================================================
    RESULT CARD STATISTICS
-   ========================================================= */
+========================================================= */
 
 .nmc-result-card-stats {
   display: flex;
@@ -14077,7 +14057,6 @@ textarea:focus-visible {
   flex-shrink: 0;
 }
 
-
 .nmc-result-stat {
   display: flex;
   align-items: center;
@@ -14085,11 +14064,9 @@ textarea:focus-visible {
   min-width: 125px;
 }
 
-
 .nmc-result-stat svg {
   color: #1769aa;
 }
-
 
 .nmc-result-stat span {
   display: block;
@@ -14099,7 +14076,6 @@ textarea:focus-visible {
   letter-spacing: 0.08em;
   color: #7a858d;
 }
-
 
 .nmc-result-stat strong {
   display: block;
@@ -14111,14 +14087,13 @@ textarea:focus-visible {
 
 /* =========================================================
    MAPPED MATERIAL SECTION
-   ========================================================= */
+========================================================= */
 
 .nmc-mapped-materials {
   margin-top: 16px;
   background: #ffffff;
   border: 1px solid #d8dee3;
 }
-
 
 .nmc-mapped-header {
   display: flex;
@@ -14130,14 +14105,12 @@ textarea:focus-visible {
   background: #f8fafb;
 }
 
-
 .nmc-mapped-header h3 {
   margin: 4px 0 3px;
   font-size: 17px;
   font-weight: 700;
   color: #172b3a;
 }
-
 
 .nmc-mapped-header span {
   font-size: 12px;
@@ -14147,7 +14120,7 @@ textarea:focus-visible {
 
 /* =========================================================
    MATERIAL CODE
-   ========================================================= */
+========================================================= */
 
 .nmc-material-code {
   display: inline-flex;
@@ -14165,31 +14138,25 @@ textarea:focus-visible {
 
 /* =========================================================
    RESPONSIVE RESULT CARD
-   ========================================================= */
+========================================================= */
 
 @media (max-width: 900px) {
-
   .nmc-result-card {
     flex-direction: column;
     gap: 18px;
   }
-
 
   .nmc-result-card-stats {
     width: 100%;
     padding-top: 14px;
     border-top: 1px solid #e1e6e9;
   }
-
 }
 
-
 @media (max-width: 640px) {
-
   .nmc-result-card {
     padding: 16px;
   }
-
 
   .nmc-result-card-stats {
     flex-direction: column;
@@ -14197,27 +14164,24 @@ textarea:focus-visible {
     gap: 14px;
   }
 
-
   .nmc-result-stat {
     min-width: 0;
   }
-
 
   .nmc-result-code-button {
     font-size: 18px;
   }
 
-
   .nmc-mapped-header {
     align-items: flex-start;
     flex-direction: column;
   }
-
 }
+
 
 /* =========================================================
    CREATIVE NMC SUMMARY CARD
-   ========================================================= */
+========================================================= */
 
 .nmc-code-summary-card {
   position: relative;
@@ -14230,14 +14194,13 @@ textarea:focus-visible {
   background: #ffffff;
   border: 1px solid #d8dee3;
   border-left: 4px solid #1769aa;
-  box-shadow: 0 3px 10px rgba(23, 43, 58, 0.05);
+  box-shadow:
+    0 3px 10px rgba(23, 43, 58, 0.05);
 }
-
 
 .nmc-code-summary-left {
   min-width: 0;
 }
-
 
 .nmc-summary-eyebrow {
   margin-bottom: 6px;
@@ -14246,7 +14209,6 @@ textarea:focus-visible {
   font-weight: 700;
   letter-spacing: 0.1em;
 }
-
 
 .nmc-summary-code {
   display: flex;
@@ -14258,11 +14220,9 @@ textarea:focus-visible {
   letter-spacing: -0.02em;
 }
 
-
 .nmc-summary-code svg {
   flex-shrink: 0;
 }
-
 
 .nmc-code-summary-left p {
   margin: 7px 0 0;
@@ -14273,7 +14233,7 @@ textarea:focus-visible {
 
 /* =========================================================
    MAPPED MATERIAL STAT
-   ========================================================= */
+========================================================= */
 
 .nmc-summary-stat {
   display: flex;
@@ -14284,11 +14244,9 @@ textarea:focus-visible {
   border-left: 1px solid #dfe4e7;
 }
 
-
 .nmc-summary-stat > svg {
   color: #1769aa;
 }
-
 
 .nmc-summary-stat span {
   display: block;
@@ -14299,14 +14257,12 @@ textarea:focus-visible {
   letter-spacing: 0.08em;
 }
 
-
 .nmc-summary-stat strong {
   margin-right: 4px;
   color: #172b3a;
   font-size: 24px;
   font-weight: 750;
 }
-
 
 .nmc-summary-stat small {
   color: #697780;
@@ -14316,7 +14272,7 @@ textarea:focus-visible {
 
 /* =========================================================
    SUMMARY ACTION
-   ========================================================= */
+========================================================= */
 
 .nmc-summary-action button {
   display: flex;
@@ -14335,7 +14291,6 @@ textarea:focus-visible {
     transform 0.18s ease;
 }
 
-
 .nmc-summary-action button:hover {
   background: #12598f;
   transform: translateX(2px);
@@ -14344,7 +14299,7 @@ textarea:focus-visible {
 
 /* =========================================================
    MATERIAL DECK SECTION
-   ========================================================= */
+========================================================= */
 
 .nmc-material-deck-section {
   position: relative;
@@ -14353,14 +14308,12 @@ textarea:focus-visible {
   border: 1px solid #d8dee3;
 }
 
-
 .nmc-deck-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 22px;
 }
-
 
 .nmc-deck-eyebrow {
   margin-bottom: 5px;
@@ -14370,7 +14323,6 @@ textarea:focus-visible {
   letter-spacing: 0.1em;
 }
 
-
 .nmc-deck-header h3 {
   margin: 0;
   color: #172b3a;
@@ -14378,13 +14330,11 @@ textarea:focus-visible {
   font-weight: 750;
 }
 
-
 .nmc-deck-header p {
   margin: 5px 0 0;
   color: #6b7780;
   font-size: 12px;
 }
-
 
 .nmc-deck-progress {
   display: flex;
@@ -14395,12 +14345,10 @@ textarea:focus-visible {
   border: 1px solid #d8dee3;
 }
 
-
 .nmc-deck-progress strong {
   color: #1769aa;
   font-size: 20px;
 }
-
 
 .nmc-deck-progress span {
   color: #7a858d;
@@ -14410,7 +14358,7 @@ textarea:focus-visible {
 
 /* =========================================================
    STACKED CARD DECK
-   ========================================================= */
+========================================================= */
 
 .nmc-card-deck {
   position: relative;
@@ -14424,17 +14372,21 @@ textarea:focus-visible {
 
 /* =========================================================
    MATERIAL CARD
-   ========================================================= */
+========================================================= */
 
 .nmc-material-card {
   position: absolute;
   top: 0;
   left: 50%;
+
   width: calc(100% - 36px);
   min-height: 300px;
+
   background: #ffffff;
   border: 1px solid #ccd5da;
-  box-shadow: 0 8px 22px rgba(23, 43, 58, 0.10);
+
+  box-shadow:
+    0 8px 22px rgba(23, 43, 58, 0.10);
 
   transform:
     translateX(-50%)
@@ -14456,12 +14408,10 @@ textarea:focus-visible {
     calc(20 - var(--card-position));
 }
 
-
 .nmc-material-card.active {
   cursor: pointer;
   z-index: 30;
 }
-
 
 .nmc-material-card.active:hover {
   transform:
@@ -14473,37 +14423,85 @@ textarea:focus-visible {
     0 14px 30px rgba(23, 43, 58, 0.15);
 }
 
-
 .nmc-material-card.behind {
->>>>>>> Stashed changes
   pointer-events: none;
 }
 
 
 /* =========================================================
-<<<<<<< Updated upstream
+   RESPONSIVE NMC SUMMARY / DECK
+========================================================= */
+
+@media (max-width: 900px) {
+  .nmc-code-summary-card {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .nmc-summary-stat {
+    padding-left: 0;
+    padding-top: 15px;
+    border-left: none;
+    border-top: 1px solid #dfe4e7;
+  }
+
+  .nmc-summary-action {
+    width: 100%;
+  }
+
+  .nmc-summary-action button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .nmc-material-deck-section {
+    padding: 18px 14px 20px;
+  }
+
+  .nmc-card-deck {
+    min-height: 350px;
+    padding: 0 8px 30px;
+  }
+
+  .nmc-material-card {
+    width: calc(100% - 16px);
+  }
+
+  .nmc-summary-code {
+    font-size: 20px;
+  }
+
+  .nmc-summary-stat strong {
+    font-size: 21px;
+  }
+
+  .nmc-deck-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+
+
+/* =========================================================
    CONNECTED CPSE
    ========================================================= */
 
 .cpse-info {
   width: 100%;
   min-height: 72px;
-
   display: flex;
   align-items: center;
-
   gap: 13px;
-
   margin-bottom: 14px;
   padding: 13px 18px;
-
   box-sizing: border-box;
-
   background: #f8fafc;
-
   border: 1px solid #e2e8f0;
   border-radius: 10px;
-
   overflow: hidden;
 }
 
@@ -14511,19 +14509,13 @@ textarea:focus-visible {
   width: 38px;
   height: 38px;
   min-width: 38px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   box-sizing: border-box;
-
   border-radius: 7px;
-
   background: #ffffff;
-
   border: 1px solid #dbe3ed;
-
   color: #2563eb;
 }
 
@@ -14540,48 +14532,36 @@ textarea:focus-visible {
 .company-details span,
 .sap-system span {
   display: block;
-
   color: #64748b;
-
   font-size: 11px;
   line-height: 1.3;
 }
 
 .company-details strong {
   display: block;
-
   margin-top: 2px;
-
   color: #0f172a;
-
   font-size: 16px;
   font-weight: 650;
 }
 
 .company-details p {
   margin: 1px 0 0;
-
   color: #64748b;
-
   font-size: 11.5px;
   line-height: 1.3;
 }
 
 .sap-system {
   min-width: 130px;
-
   padding-left: 24px;
-
   border-left: 1px solid #dbe3ed;
 }
 
 .sap-system strong {
   display: block;
-
   margin-top: 3px;
-
   color: #0f172a;
-
   font-size: 13px;
   font-weight: 650;
 }
@@ -14593,12 +14573,12 @@ textarea:focus-visible {
 
 .sync-grid {
   width: 100%;
-
   display: grid;
 
   /*
     Material file | Pull | Update | Reset
   */
+
   grid-template-columns:
     minmax(0, 2fr)
     minmax(130px, 1fr)
@@ -14606,9 +14586,7 @@ textarea:focus-visible {
     90px;
 
   gap: 12px;
-
   align-items: end;
-
   box-sizing: border-box;
 }
 
@@ -14616,37 +14594,27 @@ textarea:focus-visible {
 .sync-action {
   width: 100%;
   min-width: 0;
-
   box-sizing: border-box;
 }
 
 
-/* =========================
+/* =========================================================
    COMPACT CSV UPLOAD
-   ========================= */
+   ========================================================= */
 
 .compact-upload {
   width: 100%;
   height: 42px;
-
   display: flex !important;
   align-items: center !important;
-
   gap: 9px;
-
   padding: 0 11px;
-
   box-sizing: border-box;
-
   border: 1px dashed #cbd5e1;
   border-radius: 7px;
-
   background: #ffffff;
-
   cursor: pointer;
-
   overflow: hidden;
-
   transition:
     border-color 0.2s ease,
     background 0.2s ease;
@@ -14666,14 +14634,10 @@ textarea:focus-visible {
 
 .compact-upload > svg:first-of-type {
   position: static !important;
-
   width: 19px;
   height: 19px;
-
   flex-shrink: 0;
-
   transform: none !important;
-
   color: #2563eb;
 }
 
@@ -14683,43 +14647,30 @@ textarea:focus-visible {
 .compact-upload div {
   flex: 1;
   min-width: 0;
-
   display: flex !important;
   flex-direction: column !important;
   justify-content: center;
-
   overflow: hidden;
 }
 
 .compact-upload strong {
   display: block;
-
   overflow: hidden;
-
   margin: 0;
-
   color: #334155;
-
   font-size: 12px;
   font-weight: 600;
-
   line-height: 1.2;
-
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
 .compact-upload span {
   display: block;
-
   margin: 2px 0 0;
-
   color: #94a3b8;
-
   font-size: 10.5px;
-
   line-height: 1.2;
-
   white-space: nowrap;
 }
 
@@ -14728,14 +14679,10 @@ textarea:focus-visible {
 
 .compact-upload > svg:last-of-type {
   position: static !important;
-
   width: 17px;
   height: 17px;
-
   flex-shrink: 0;
-
   transform: none !important;
-
   color: #64748b;
 }
 
@@ -14750,30 +14697,19 @@ textarea:focus-visible {
   width: 100%;
   min-width: 0;
   height: 42px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   gap: 7px;
-
   padding: 0 10px;
-
   box-sizing: border-box;
-
   border-radius: 7px;
-
   font-family: inherit;
-
   font-size: 12px;
   font-weight: 600;
-
   line-height: 1;
-
   cursor: pointer;
-
   white-space: nowrap;
-
   transition:
     background 0.2s ease,
     border-color 0.2s ease,
@@ -14782,50 +14718,40 @@ textarea:focus-visible {
 
 .primary-button {
   background: #2563eb;
-
   border: 1px solid #2563eb;
-
   color: #ffffff;
 }
 
 .primary-button:hover:not(:disabled) {
   background: #1d4ed8;
-
   border-color: #1d4ed8;
 }
 
 .secondary-button {
   background: #ffffff;
-
   border: 1px solid #cbd5e1;
-
   color: #334155;
 }
 
 .secondary-button:hover:not(:disabled) {
   background: #f8fafc;
-
   border-color: #94a3b8;
 }
 
 .reset-button {
   background: #ffffff;
-
   border: 1px solid #e2e8f0;
-
   color: #64748b;
 }
 
 .reset-button:hover {
   background: #f8fafc;
-
   border-color: #cbd5e1;
 }
 
 .primary-button:disabled,
 .secondary-button:disabled {
   opacity: 0.45;
-
   cursor: not-allowed;
 }
 
@@ -14833,12 +14759,13 @@ textarea:focus-visible {
 .secondary-button svg,
 .reset-button svg {
   position: static !important;
-
   flex-shrink: 0;
-
   transform: none !important;
-=======
-   CARD TOP
+}
+
+
+/* =========================================================
+   NMC MATERIAL CARD
    ========================================================= */
 
 .nmc-material-card-top {
@@ -14850,13 +14777,11 @@ textarea:focus-visible {
   border-bottom: 1px solid #dce2e5;
 }
 
-
 .nmc-material-card-number {
   display: flex;
   align-items: baseline;
   gap: 7px;
 }
-
 
 .nmc-material-card-number span {
   color: #7a858d;
@@ -14865,12 +14790,10 @@ textarea:focus-visible {
   letter-spacing: 0.09em;
 }
 
-
 .nmc-material-card-number strong {
   color: #1769aa;
   font-size: 19px;
 }
-
 
 .nmc-material-card-cpse {
   display: flex;
@@ -14884,198 +14807,149 @@ textarea:focus-visible {
   font-weight: 700;
 }
 
-
 .nmc-material-card-cpse svg {
   color: #1769aa;
->>>>>>> Stashed changes
 }
 
 
 /* =========================================================
-<<<<<<< Updated upstream
    INTEGRATION STATUS
    ========================================================= */
 
 .status-badge {
   flex-shrink: 0;
-
   padding: 5px 9px;
-
   box-sizing: border-box;
-
   border-radius: 5px;
-
   background: #f1f5f9;
-
   color: #64748b;
-
   font-size: 11px;
   font-weight: 600;
-
   white-space: nowrap;
 }
 
 .status-badge.ready {
   background: #eff6ff;
-
   color: #2563eb;
 }
 
 .status-badge.pulled {
   background: #f0fdf4;
-
   color: #15803d;
 }
 
 .status-badge.updated {
   background: #f0fdf4;
-
   color: #15803d;
 }
 
 
-/* =========================
+/* =========================================================
    STATUS PROGRESS
-   ========================= */
+   ========================================================= */
 
 .status-flow {
   width: 100%;
   max-width: 760px;
-
   display: flex;
   align-items: center;
-
   margin: 4px auto 14px;
-
   box-sizing: border-box;
-
   overflow: hidden;
 }
 
 .status-step {
   flex: 0 0 auto;
-
   min-width: 105px;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-
   gap: 5px;
 }
 
 .status-step span {
   color: #94a3b8;
-
   font-size: 11px;
-
   line-height: 1.2;
-
   white-space: nowrap;
 }
 
 .status-step.active span {
   color: #334155;
-
   font-weight: 600;
 }
 
 .status-circle {
   width: 26px;
   height: 26px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   color: #16a34a;
 }
 
 .status-circle svg {
   position: static !important;
-
   transform: none !important;
 }
 
 .empty-circle {
   width: 9px;
   height: 9px;
-
   box-sizing: border-box;
-
   border: 2px solid #cbd5e1;
-
   border-radius: 50%;
 }
 
 .status-line {
   flex: 1;
-
   min-width: 30px;
   height: 1px;
-
   margin-bottom: 20px;
-
   background: #e2e8f0;
 }
 
 
-/* =========================
+/* =========================================================
    STATUS MESSAGE
-   ========================= */
+   ========================================================= */
 
 .status-message {
   width: 100%;
   min-height: 34px;
-
   display: flex;
   align-items: center;
-
   gap: 8px;
-
   padding: 8px 11px;
-
   box-sizing: border-box;
-
   border-radius: 6px;
-
   background: #f8fafc;
-
   color: #64748b;
-
   font-size: 11.5px;
-
   overflow: hidden;
 }
 
 .status-message svg {
   position: static !important;
-
   flex-shrink: 0;
-
   transform: none !important;
 }
 
 .status-message span {
   min-width: 0;
-
   overflow: hidden;
-
   text-overflow: ellipsis;
-
   white-space: nowrap;
 }
 
 .status-message.ready {
   background: #eff6ff;
-
   color: #1d4ed8;
 }
 
 .status-message.pulled,
 .status-message.updated {
   background: #f0fdf4;
-
   color: #15803d;
 }
 
@@ -15086,63 +14960,42 @@ textarea:focus-visible {
 
 .record-count {
   flex-shrink: 0;
-
   padding: 5px 9px;
-
   box-sizing: border-box;
-
   background: #f8fafc;
-
   border-radius: 5px;
-
   color: #64748b;
-
   font-size: 11px;
-
   white-space: nowrap;
 }
 
 .record-summary {
   width: 100%;
-
   display: grid;
-
   grid-template-columns: repeat(3, 1fr);
-
   gap: 10px;
-
   margin-bottom: 13px;
 }
 
 .record-summary div {
   padding: 10px 12px;
-
   box-sizing: border-box;
-
   background: #f8fafc;
-
   border-radius: 6px;
 }
 
 .record-summary span {
   display: block;
-
   color: #64748b;
-
   font-size: 10.5px;
-
   line-height: 1.2;
 }
 
 .record-summary strong {
   display: block;
-
   margin-top: 3px;
-
   color: #0f172a;
-
   font-size: 14px;
-
   line-height: 1.2;
 }
 
@@ -15153,47 +15006,32 @@ textarea:focus-visible {
 
 .table-container {
   width: 100%;
-
   overflow-x: auto;
-
   box-sizing: border-box;
-
   border: 1px solid #e2e8f0;
-
   border-radius: 7px;
 }
 
 .table-container table {
   width: 100%;
-
   border-collapse: collapse;
-
   font-size: 11px;
 }
 
 .table-container th {
   padding: 9px 11px;
-
   text-align: left;
-
   background: #f8fafc;
-
   color: #475569;
-
   font-weight: 600;
-
   border-bottom: 1px solid #e2e8f0;
-
   white-space: nowrap;
 }
 
 .table-container td {
   padding: 8px 11px;
-
   color: #334155;
-
   border-bottom: 1px solid #f1f5f9;
-
   white-space: nowrap;
 }
 
@@ -15203,9 +15041,7 @@ textarea:focus-visible {
 
 .table-note {
   margin: 7px 0 0;
-
   color: #64748b;
-
   font-size: 10.5px;
 }
 
@@ -15231,8 +15067,6 @@ textarea:focus-visible {
 
 /* =========================================================
    IMPORTANT GLOBAL OVERRIDES
-   These prevent existing App.css styles from
-   breaking the SAP component.
    ========================================================= */
 
 .sap-page svg {
@@ -15246,14 +15080,16 @@ textarea:focus-visible {
 
 .sap-page label {
   box-sizing: border-box;
-=======
-   CARD CONTENT
+}
+
+
+/* =========================================================
+   NMC MATERIAL CARD CONTENT
    ========================================================= */
 
 .nmc-material-card-content {
   padding: 22px 24px;
 }
-
 
 .nmc-material-card-code {
   display: inline-flex;
@@ -15266,7 +15102,6 @@ textarea:focus-visible {
   font-size: 11px;
   font-weight: 750;
 }
-
 
 .nmc-material-card-content h4 {
   max-width: 700px;
@@ -15288,18 +15123,15 @@ textarea:focus-visible {
   gap: 14px;
 }
 
-
 .nmc-material-card-grid > div {
   padding: 11px 13px;
   background: #fafbfc;
   border: 1px solid #e1e6e9;
 }
 
-
 .nmc-material-card-grid > div.full {
   grid-column: 1 / -1;
 }
-
 
 .nmc-material-card-grid span {
   display: block;
@@ -15309,7 +15141,6 @@ textarea:focus-visible {
   font-weight: 750;
   letter-spacing: 0.09em;
 }
-
 
 .nmc-material-card-grid strong {
   display: block;
@@ -15335,7 +15166,6 @@ textarea:focus-visible {
   font-weight: 650;
 }
 
-
 .nmc-material-card-footer svg {
   flex-shrink: 0;
 }
@@ -15353,13 +15183,11 @@ textarea:focus-visible {
   margin-top: 8px;
 }
 
-
 .nmc-deck-controls > span {
   color: #77838b;
   font-size: 11px;
   text-align: center;
 }
-
 
 .nmc-deck-back,
 .nmc-deck-reset {
@@ -15376,18 +15204,15 @@ textarea:focus-visible {
   cursor: pointer;
 }
 
-
 .nmc-deck-back:hover:not(:disabled),
 .nmc-deck-reset:hover {
   border-color: #1769aa;
   color: #1769aa;
 }
 
-
 .nmc-deck-back:disabled {
   opacity: 0.4;
   cursor: not-allowed;
->>>>>>> Stashed changes
 }
 
 
@@ -15395,7 +15220,6 @@ textarea:focus-visible {
    RESPONSIVE
    ========================================================= */
 
-<<<<<<< Updated upstream
 /* Medium screens */
 
 @media (max-width: 1150px) {
@@ -15410,7 +15234,6 @@ textarea:focus-visible {
   .reset-action {
     display: none;
   }
-
 }
 
 
@@ -15436,14 +15259,15 @@ textarea:focus-visible {
 
   .sap-system {
     margin-left: auto;
-=======
-@media (max-width: 900px) {
+  }
+
+
+  /* NMC */
 
   .nmc-code-summary-card {
     grid-template-columns: 1fr;
     gap: 18px;
   }
-
 
   .nmc-summary-stat {
     padding-left: 0;
@@ -15452,22 +15276,17 @@ textarea:focus-visible {
     border-top: 1px solid #dfe4e7;
   }
 
-
   .nmc-summary-action button {
     width: 100%;
     justify-content: center;
   }
 
-
   .nmc-card-deck {
     min-height: 350px;
->>>>>>> Stashed changes
   }
-
 }
 
 
-<<<<<<< Updated upstream
 /* Mobile */
 
 @media (max-width: 650px) {
@@ -15502,12 +15321,9 @@ textarea:focus-visible {
 
   .sap-system {
     width: 100%;
-
     margin-left: 0;
-
     padding-left: 0;
     padding-top: 10px;
-
     border-left: none;
     border-top: 1px solid #dbe3ed;
   }
@@ -15518,18 +15334,14 @@ textarea:focus-visible {
 
   .status-flow {
     max-width: 100%;
-
     flex-direction: column;
-
     gap: 4px;
   }
 
   .status-line {
     width: 1px;
     min-width: 1px;
-
     height: 18px;
-
     margin: 0;
   }
 
@@ -15541,62 +15353,575 @@ textarea:focus-visible {
     white-space: normal;
   }
 
-}
-=======
-@media (max-width: 640px) {
+
+  /* NMC */
 
   .nmc-material-deck-section {
     padding: 17px 12px 20px;
   }
-
 
   .nmc-deck-header {
     align-items: flex-start;
     gap: 12px;
   }
 
-
   .nmc-deck-progress {
     flex-shrink: 0;
   }
-
 
   .nmc-card-deck {
     min-height: 390px;
     padding: 0 4px 30px;
   }
 
-
   .nmc-material-card {
     width: calc(100% - 8px);
   }
-
 
   .nmc-material-card-grid {
     grid-template-columns: 1fr;
   }
 
-
   .nmc-material-card-grid > div.full {
     grid-column: auto;
   }
-
 
   .nmc-material-card-content {
     padding: 18px;
   }
 
-
   .nmc-material-card-content h4 {
     font-size: 16px;
   }
 
-
   .nmc-deck-controls {
     flex-wrap: wrap;
   }
-
 }
 
 
->>>>>>> Stashed changes
+/* =========================================================
+   SMART SUBSTITUTION
+   ========================================================= */
+
+.smart-substitution-page {
+  padding: 28px 32px 40px;
+  color: #172b3a;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.smart-page-header {
+  margin-bottom: 24px;
+}
+
+.smart-eyebrow {
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #1769aa;
+}
+
+.smart-page-header h2 {
+  margin: 0;
+  font-size: 27px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.smart-page-header p {
+  margin: 7px 0 0;
+  color: #66727d;
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.smart-error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  border: 1px solid #e2b9b9;
+  background: #fff7f7;
+  color: #9b3030;
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   SEARCH PANEL
+   ========================================================= */
+
+.smart-search-panel {
+  border: 1px solid #d8dee3;
+  background: #ffffff;
+  padding: 20px;
+  margin-bottom: 22px;
+}
+
+.smart-panel-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  margin-bottom: 16px;
+}
+
+.smart-panel-heading > svg {
+  margin-top: 2px;
+  color: #1769aa;
+}
+
+.smart-panel-heading h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.smart-panel-heading span {
+  display: block;
+  margin-top: 4px;
+  color: #78838d;
+  font-size: 12px;
+}
+
+.smart-search-row {
+  display: flex;
+  width: 100%;
+}
+
+.smart-search-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 13px;
+  border: 1px solid #cfd7dd;
+  background: #f9fafb;
+}
+
+.smart-search-input:focus-within {
+  border-color: #1769aa;
+  background: #ffffff;
+}
+
+.smart-search-input svg {
+  color: #7b8791;
+  flex-shrink: 0;
+}
+
+.smart-search-input input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #172b3a;
+  font: inherit;
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   SEARCH RESULTS
+   ========================================================= */
+
+.smart-search-results {
+  margin-top: 10px;
+  border: 1px solid #d8dee3;
+  background: #ffffff;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.smart-search-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  border-bottom: 1px solid #edf0f2;
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  color: #172b3a;
+}
+
+.smart-search-result:last-child {
+  border-bottom: none;
+}
+
+.smart-search-result:hover,
+.smart-search-result.selected {
+  background: #f2f7fb;
+}
+
+.smart-search-result > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.smart-search-result strong {
+  font-size: 12px;
+  font-weight: 750;
+  color: #1769aa;
+}
+
+.smart-search-result span {
+  font-size: 13px;
+}
+
+.smart-result-cpse {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #6c7882;
+  font-size: 11px !important;
+}
+
+.smart-no-results {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 22px;
+  color: #7a858e;
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   SELECTED MATERIAL
+   ========================================================= */
+
+.smart-selected-panel {
+  border: 1px solid #cfd9e0;
+  background: #f8fafb;
+  margin-bottom: 22px;
+}
+
+.smart-selected-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 20px;
+  border-bottom: 1px solid #dce2e6;
+}
+
+.smart-selected-eyebrow,
+.smart-alternatives-eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  color: #1769aa;
+}
+
+.smart-selected-header h3 {
+  margin: 5px 0 2px;
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.smart-selected-header > div:first-child > span {
+  color: #6d7983;
+  font-size: 12px;
+  font-family: monospace;
+}
+
+.smart-selected-cpse {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 11px;
+  border: 1px solid #d5dde2;
+  background: #ffffff;
+  color: #40515d;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.smart-selected-spec {
+  padding: 14px 20px 16px;
+}
+
+.smart-selected-spec > span {
+  font-size: 10px;
+  font-weight: 800;
+  color: #7b8790;
+  letter-spacing: 0.08em;
+}
+
+.smart-selected-spec p {
+  margin: 6px 0 0;
+  color: #46545f;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   ALTERNATIVES
+   ========================================================= */
+
+.smart-alternatives-section {
+  border: 1px solid #d8dee3;
+  background: #ffffff;
+}
+
+.smart-alternatives-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 20px;
+  border-bottom: 1px solid #dce2e6;
+}
+
+.smart-alternatives-header h3 {
+  margin: 5px 0 3px;
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.smart-alternatives-header > div:first-child > span {
+  color: #74808a;
+  font-size: 12px;
+}
+
+.smart-sort-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #65727c;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.smart-alternatives-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.smart-alternatives-table {
+  width: 100%;
+  min-width: 1050px;
+  border-collapse: collapse;
+}
+
+.smart-alternatives-table th {
+  padding: 11px 14px;
+  background: #f4f6f7;
+  border-bottom: 1px solid #d8dee3;
+  color: #68747e;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.smart-alternatives-table td {
+  padding: 14px;
+  border-bottom: 1px solid #edf0f2;
+  vertical-align: middle;
+  font-size: 12px;
+}
+
+.smart-alternatives-table tbody tr:hover {
+  background: #fafcfd;
+}
+
+.smart-material-code {
+  display: inline-flex;
+  padding: 5px 8px;
+  background: #edf4f8;
+  color: #1769aa;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.smart-material-name {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 190px;
+}
+
+.smart-material-name svg {
+  color: #1769aa;
+  flex-shrink: 0;
+}
+
+.smart-material-name strong {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.smart-cpse {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #465660;
+  white-space: nowrap;
+}
+
+.smart-specification {
+  display: block;
+  max-width: 260px;
+  color: #68747e;
+  line-height: 1.4;
+}
+
+.smart-availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #34724d;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.smart-compatibility {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  font-size: 10px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.smart-compatibility.compatible {
+  background: #edf7f0;
+  color: #287145;
+}
+
+.smart-compatibility.conditional {
+  background: #fff7e7;
+  color: #986a15;
+}
+
+.smart-compatibility.incompatible {
+  background: #fceeee;
+  color: #a43d3d;
+}
+
+.smart-price {
+  color: #172b3a;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.smart-price.unknown {
+  color: #8a949c;
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   EMPTY / INITIAL
+   ========================================================= */
+
+.smart-empty-state,
+.smart-initial-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  margin-top: 22px;
+  padding: 30px;
+  border: 1px dashed #cfd7dd;
+  background: #fafbfc;
+  text-align: center;
+}
+
+.smart-empty-state svg,
+.smart-initial-state > svg {
+  color: #1769aa;
+  margin-bottom: 10px;
+}
+
+.smart-empty-state h3,
+.smart-initial-state h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.smart-empty-state p,
+.smart-initial-state p {
+  max-width: 480px;
+  margin: 7px 0 0;
+  color: #7a858e;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.smart-loading-icon {
+  animation: smart-spin 1s linear infinite;
+}
+
+@keyframes smart-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   SMART SUBSTITUTION RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .smart-substitution-page {
+    padding: 20px;
+  }
+
+  .smart-selected-header,
+  .smart-alternatives-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+
+@media (max-width: 650px) {
+
+  .smart-substitution-page {
+    padding: 16px;
+  }
+
+  .smart-search-panel,
+  .smart-selected-panel,
+  .smart-alternatives-section {
+    border-left: none;
+    border-right: none;
+  }
+
+  .smart-selected-header,
+  .smart-selected-spec,
+  .smart-alternatives-header {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
