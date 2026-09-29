@@ -3,39 +3,147 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   Search,
-  Filter,
-  RotateCcw,
   Package,
   Building2,
   Hash,
-  ChevronDown,
   AlertCircle,
+  ArrowRight,
+  ArrowLeft,
+  Layers3,
+  ChevronRight,
+  RotateCcw,
 } from "lucide-react";
 
 import { getSampleMaterials } from "./api";
 
 
 /* =========================================================
-   FRONTEND NMC CODE GENERATOR
+   DUMMY FRONTEND NMC MAPPING
 
-   Temporary frontend fallback for Step 8.
+   Temporary frontend mapping because the real NMC
+   harmonization backend is not working yet.
 
-   This generates a deterministic NMC-style code from
-   the material category and its position in the dataset.
-
-   Example:
-   Fasteners → NMC-FST-0001
-   Valves    → NMC-VLV-0002
-   Pipes     → NMC-PIP-0003
-
-   This is NOT the actual Step 8 common_material_code.
+   One NMC code → multiple CPSE material records.
    ========================================================= */
 
-function getCategoryPrefix(category, description) {
+const dummyNMCMapping = {
+
+  "NMC-BLT-0001": [
+    "ONGC-BLT-001",
+    "CPCL-BLT-001",
+    "SAIL-BLT-045",
+    "BHEL-BLT-016",
+  ],
+
+  "NMC-VLV-0002": [
+    "ONGC-VAL-001",
+    "CPCL-VAL-019",
+    "ONGC-VAL-014",
+    "CPCL-VAL-014",
+  ],
+
+  "NMC-PIP-0003": [
+    "ONGC-PIPE-001",
+    "CPCL-PIPE-021",
+    "ONGC-PIPE-011",
+    "CPCL-PIPE-011",
+  ],
+
+  "NMC-CBL-0004": [
+    "ONGC-CBL-007",
+    "CPCL-CBL-014",
+    "BHEL-CBL-013",
+  ],
+
+  "NMC-BRG-0005": [
+    "NMDC-BRG-013",
+    "CPCL-BRG-025",
+    "NMDC-BRG-025",
+  ],
+
+  "NMC-LUB-0006": [
+    "ONGC-OIL-018",
+    "CPCL-OIL-018",
+  ],
+
+  "NMC-PMP-0007": [
+    "ONGC-PMP-020",
+    "BHEL-PMP-020",
+  ],
+
+  "NMC-INS-0008": [
+    "ONGC-PT-021",
+    "CPCL-PT-021",
+    "ONGC-PT-022",
+  ],
+
+  "NMC-GSK-0009": [
+    "NMDC-GSK-024",
+    "ONGC-GSK-024",
+  ],
+
+  "NMC-MAT-0010": [
+    "SAIL-PLT-017",
+    "SAIL-PLT-018",
+    "ONGC-CHM-019",
+    "CPCL-CHM-019",
+  ],
+
+};
+
+
+/* =========================================================
+   GET DUMMY NMC CODE
+   ========================================================= */
+
+function getDummyNMCCode(materialCode) {
+
+  const code =
+    String(materialCode || "")
+      .trim()
+      .toUpperCase();
+
+
+  for (
+    const [nmcCode, materialCodes]
+    of Object.entries(dummyNMCMapping)
+  ) {
+
+    if (
+      materialCodes
+        .map((item) =>
+          String(item)
+            .trim()
+            .toUpperCase()
+        )
+        .includes(code)
+    ) {
+
+      return nmcCode;
+
+    }
+
+  }
+
+
+  return null;
+
+}
+
+
+/* =========================================================
+   FALLBACK CATEGORY PREFIX
+   ========================================================= */
+
+function getCategoryPrefix(
+  category,
+  description
+) {
 
   const text =
     `${category || ""} ${description || ""}`
       .toUpperCase();
+
 
   if (
     text.includes("BOLT") ||
@@ -46,11 +154,11 @@ function getCategoryPrefix(category, description) {
     return "BLT";
   }
 
-  if (
-    text.includes("VALVE")
-  ) {
+
+  if (text.includes("VALVE")) {
     return "VLV";
   }
+
 
   if (
     text.includes("PIPE") ||
@@ -59,11 +167,11 @@ function getCategoryPrefix(category, description) {
     return "PIP";
   }
 
-  if (
-    text.includes("BEARING")
-  ) {
+
+  if (text.includes("BEARING")) {
     return "BRG";
   }
+
 
   if (
     text.includes("CABLE") ||
@@ -72,29 +180,26 @@ function getCategoryPrefix(category, description) {
     return "CBL";
   }
 
-  if (
-    text.includes("PUMP")
-  ) {
+
+  if (text.includes("PUMP")) {
     return "PMP";
   }
 
-  if (
-    text.includes("MOTOR")
-  ) {
+
+  if (text.includes("MOTOR")) {
     return "MTR";
   }
 
-  if (
-    text.includes("FILTER")
-  ) {
+
+  if (text.includes("FILTER")) {
     return "FLT";
   }
 
-  if (
-    text.includes("GASKET")
-  ) {
+
+  if (text.includes("GASKET")) {
     return "GSK";
   }
+
 
   if (
     text.includes("OIL") ||
@@ -103,15 +208,24 @@ function getCategoryPrefix(category, description) {
     return "LUB";
   }
 
+
   if (
-    text.includes("INSTRUMENT")
+    text.includes("INSTRUMENT") ||
+    text.includes("TRANSMITTER") ||
+    text.includes("PRESSURE")
   ) {
     return "INS";
   }
 
+
   return "MAT";
+
 }
 
+
+/* =========================================================
+   COMPONENT
+   ========================================================= */
 
 function NMCCode() {
 
@@ -119,15 +233,64 @@ function NMCCode() {
      BACKEND DATA
   ======================================================= */
 
-  const [nmcMaterials, setNmcMaterials] =
-    useState([]);
+  const [
+    nmcMaterials,
+    setNmcMaterials
+  ] = useState([]);
 
-  const [loading, setLoading] =
-    useState(true);
 
-  const [error, setError] =
-    useState("");
+  const [
+    loading,
+    setLoading
+  ] = useState(true);
 
+
+  const [
+    error,
+    setError
+  ] = useState("");
+
+
+  /* =======================================================
+     SEARCH STATE
+  ======================================================= */
+
+  const [
+    nmcSearch,
+    setNmcSearch
+  ] = useState("");
+
+
+  const [
+    searchedCode,
+    setSearchedCode
+  ] = useState("");
+
+
+  /* =======================================================
+     MAPPING DECK STATE
+
+     0 = first card
+     1 = second card
+     2 = third card
+     ...
+  ======================================================= */
+
+  const [
+    activeCardIndex,
+    setActiveCardIndex
+  ] = useState(0);
+
+
+  const [
+    deckStarted,
+    setDeckStarted
+  ] = useState(false);
+
+
+  /* =======================================================
+     LOAD MATERIALS
+  ======================================================= */
 
   useEffect(() => {
 
@@ -139,12 +302,15 @@ function NMCCode() {
 
         setError("");
 
+
         const data =
           await getSampleMaterials();
+
 
         setNmcMaterials(
           data.materials || []
         );
+
 
       } catch (err) {
 
@@ -153,9 +319,11 @@ function NMCCode() {
           err
         );
 
+
         setError(
           "Unable to load material data from backend."
         );
+
 
       } finally {
 
@@ -165,107 +333,162 @@ function NMCCode() {
 
     };
 
+
     loadMaterials();
 
   }, []);
 
 
   /* =======================================================
-     ADD FRONTEND NMC CODES
+     ADD NMC CODE TO MATERIALS
   ======================================================= */
 
-  const materialsWithNMC = useMemo(() => {
+  const materialsWithNMC =
+    useMemo(() => {
 
-    /*
-      Sort by material_id so that the generated number
-      remains consistent for the same dataset.
-    */
+      return nmcMaterials.map(
+        (item, index) => {
 
-    const sortedMaterials =
-      [...nmcMaterials].sort(
-        (a, b) =>
-          String(a.material_id || "")
-            .localeCompare(
-              String(b.material_id || "")
-            )
+          const dummyCode =
+            getDummyNMCCode(
+              item.material_code
+            );
+
+
+          let nmcCode =
+            dummyCode;
+
+
+          if (!nmcCode) {
+
+            const prefix =
+              getCategoryPrefix(
+                item.category,
+                item.material_description
+              );
+
+
+            nmcCode =
+              `NMC-${prefix}-${String(
+                index + 100
+              ).padStart(4, "0")}`;
+
+          }
+
+
+          return {
+            ...item,
+            nmc_code: nmcCode,
+          };
+
+        }
       );
 
-    return sortedMaterials.map(
-      (item, index) => {
-
-        const prefix =
-          getCategoryPrefix(
-            item.category,
-            item.material_description
-          );
-
-        const number =
-          String(index + 1)
-            .padStart(4, "0");
-
-        return {
-          ...item,
-
-          nmc_code:
-            `NMC-${prefix}-${number}`,
-        };
-
-      }
-    );
-
-  }, [nmcMaterials]);
+    }, [
+      nmcMaterials,
+    ]);
 
 
   /* =======================================================
-     STATE
+     FIND SEARCHED NMC GROUP
   ======================================================= */
 
-  const [nmcSearch, setNmcSearch] =
-    useState("");
+  const searchedNMCGroup =
+    useMemo(() => {
 
-  const [searchedCode, setSearchedCode] =
-    useState("");
+      if (!searchedCode) {
 
-  const [cpseFilter, setCpseFilter] =
-    useState("All CPSEs");
+        return null;
 
-  const [materialFilter, setMaterialFilter] =
-    useState("All Materials");
+      }
+
+
+      const entry =
+        Object.entries(
+          dummyNMCMapping
+        ).find(
+          ([nmcCode]) =>
+            nmcCode.toUpperCase() ===
+            searchedCode
+        );
+
+
+      if (!entry) {
+
+        return null;
+
+      }
+
+
+      const [
+        nmcCode,
+        materialCodes
+      ] = entry;
+
+
+      const normalizedCodes =
+        materialCodes.map(
+          (code) =>
+            String(code)
+              .trim()
+              .toUpperCase()
+        );
+
+
+      const mappedMaterials =
+        materialsWithNMC.filter(
+          (item) =>
+            normalizedCodes.includes(
+              String(
+                item.material_code || ""
+              )
+                .trim()
+                .toUpperCase()
+            )
+        );
+
+
+      return {
+        nmcCode,
+        mappedMaterials,
+      };
+
+    }, [
+      searchedCode,
+      materialsWithNMC,
+    ]);
 
 
   /* =======================================================
      SEARCH
-     ======================================================= */
+  ======================================================= */
 
   const handleSearch = () => {
 
     const value =
-      nmcSearch.trim().toUpperCase();
+      nmcSearch
+        .trim()
+        .toUpperCase();
 
-    if (!value) {
-
-      setSearchedCode("");
-
-      return;
-
-    }
 
     setSearchedCode(value);
 
-    setCpseFilter("All CPSEs");
+    setActiveCardIndex(0);
 
-    setMaterialFilter("All Materials");
+    setDeckStarted(false);
 
   };
 
 
   /* =======================================================
-     ENTER KEY SEARCH
-     ======================================================= */
+     ENTER KEY
+  ======================================================= */
 
   const handleKeyDown = (event) => {
 
-    if (event.key === "Enter") {
+    if (
+      event.key === "Enter"
+    ) {
 
       handleSearch();
 
@@ -275,164 +498,86 @@ function NMCCode() {
 
 
   /* =======================================================
-     FILTER OPTIONS
-     ======================================================= */
+     START / ADVANCE CARD DECK
+  ======================================================= */
 
-  const availableMaterials =
-    useMemo(() => {
+  const handleCardClick = () => {
 
-      if (!searchedCode) {
+    if (!searchedNMCGroup) {
 
-        return [];
+      return;
 
-      }
-
-      const results =
-        materialsWithNMC.filter(
-          (item) =>
-            String(
-              item.nmc_code || ""
-            ).toUpperCase() ===
-              searchedCode ||
-            String(
-              item.material_code || ""
-            ).toUpperCase() ===
-              searchedCode
-        );
-
-      return [
-        ...new Set(
-          results.map(
-            (item) =>
-              item.material_description
-          )
-        ),
-      ];
-
-    }, [
-      searchedCode,
-      materialsWithNMC,
-    ]);
+    }
 
 
-  const availableCPSEs =
-    useMemo(() => {
-
-      if (!searchedCode) {
-
-        return [];
-
-      }
-
-      const results =
-        materialsWithNMC.filter(
-          (item) =>
-            String(
-              item.nmc_code || ""
-            ).toUpperCase() ===
-              searchedCode ||
-            String(
-              item.material_code || ""
-            ).toUpperCase() ===
-              searchedCode
-        );
-
-      return [
-        ...new Set(
-          results.map(
-            (item) =>
-              item.cpse_name
-          )
-        ),
-      ];
-
-    }, [
-      searchedCode,
-      materialsWithNMC,
-    ]);
+    const total =
+      searchedNMCGroup
+        .mappedMaterials
+        .length;
 
 
-  /* =======================================================
-     FILTER RESULTS
-     ======================================================= */
+    if (!deckStarted) {
 
-  const filteredMaterials =
-    useMemo(() => {
+      setDeckStarted(true);
 
-      if (!searchedCode) {
+      setActiveCardIndex(0);
 
-        return [];
+      return;
 
-      }
+    }
 
-      return materialsWithNMC.filter(
-        (item) => {
 
-          const searchValue =
-            searchedCode;
+    if (
+      activeCardIndex <
+      total - 1
+    ) {
 
-          const nmcMatch =
-            String(
-              item.nmc_code || ""
-            ).toUpperCase() ===
-              searchValue;
-
-          const materialCodeMatch =
-            String(
-              item.material_code || ""
-            ).toUpperCase() ===
-              searchValue;
-
-          const cpseMatch =
-            cpseFilter ===
-              "All CPSEs" ||
-            item.cpse_name ===
-              cpseFilter;
-
-          const materialMatch =
-            materialFilter ===
-              "All Materials" ||
-            item.material_description ===
-              materialFilter;
-
-          return (
-            (nmcMatch ||
-              materialCodeMatch) &&
-            cpseMatch &&
-            materialMatch
-          );
-
-        }
+      setActiveCardIndex(
+        (previous) =>
+          previous + 1
       );
 
-    }, [
-      searchedCode,
-      cpseFilter,
-      materialFilter,
-      materialsWithNMC,
-    ]);
-
-
-  /* =======================================================
-     CLEAR FILTERS
-     ======================================================= */
-
-  const clearFilters = () => {
-
-    setCpseFilter(
-      "All CPSEs"
-    );
-
-    setMaterialFilter(
-      "All Materials"
-    );
+    }
 
   };
 
 
   /* =======================================================
-     LOADING STATE
-     ======================================================= */
+     RESET DECK
+  ======================================================= */
+
+  const resetDeck = () => {
+
+    setDeckStarted(false);
+
+    setActiveCardIndex(0);
+
+  };
+
+
+  /* =======================================================
+     PREVIOUS CARD
+  ======================================================= */
+
+  const previousCard = () => {
+
+    if (
+      activeCardIndex > 0
+    ) {
+
+      setActiveCardIndex(
+        (previous) =>
+          previous - 1
+      );
+
+    }
+
+  };
+
+
+  /* =======================================================
+     LOADING
+  ======================================================= */
 
   if (loading) {
 
@@ -449,8 +594,8 @@ function NMCCode() {
           </h3>
 
           <p>
-            Fetching standardized material
-            information from the backend.
+            Fetching material information
+            from the backend.
           </p>
 
         </div>
@@ -489,7 +634,7 @@ function NMCCode() {
 
           <p>
             Search a standardized material code
-            and view associated materials across CPSEs.
+            and explore its mapped CPSE materials.
           </p>
 
         </div>
@@ -498,7 +643,7 @@ function NMCCode() {
 
 
       {/* =================================================
-          BACKEND ERROR
+          ERROR
       ================================================= */}
 
       {error && (
@@ -539,8 +684,8 @@ function NMCCode() {
               </h3>
 
               <span>
-                Enter an NMC code to view
-                the associated material record.
+                Enter an NMC code to explore
+                its mapped material records.
               </span>
 
             </div>
@@ -588,7 +733,7 @@ function NMCCode() {
 
 
       {/* =================================================
-          RESULTS
+          SEARCH RESULT
       ================================================= */}
 
       {searchedCode && (
@@ -596,317 +741,461 @@ function NMCCode() {
         <section className="nmc-results-section">
 
 
-          {/* =============================================
-              RESULT HEADER
-          ============================================= */}
+          {searchedNMCGroup ? (
 
-          <div className="nmc-results-header">
+            <>
+              {/* =========================================
+                  NMC SUMMARY CARD
+              ========================================= */}
 
-            <div>
+              <div className="nmc-code-summary-card">
 
-              <div className="nmc-result-label">
-                NMC CODE
+                <div className="nmc-code-summary-left">
+
+                  <div className="nmc-summary-eyebrow">
+
+                    NMC CODE
+
+                  </div>
+
+
+                  <div className="nmc-summary-code">
+
+                    <Hash size={21} />
+
+                    <span>
+                      {searchedNMCGroup.nmcCode}
+                    </span>
+
+                  </div>
+
+
+                  <p>
+                    Standardized material group
+                    across participating CPSEs.
+                  </p>
+
+                </div>
+
+
+                <div className="nmc-summary-stat">
+
+                  <Layers3 size={20} />
+
+                  <div>
+
+                    <span>
+                      TOTAL MAPPED
+                    </span>
+
+                    <strong>
+                      {
+                        searchedNMCGroup
+                          .mappedMaterials
+                          .length
+                      }
+                    </strong>
+
+                    <small>
+                      materials
+                    </small>
+
+                  </div>
+
+                </div>
+
+
+                <div className="nmc-summary-action">
+
+                  <button
+                    type="button"
+                    onClick={handleCardClick}
+                  >
+
+                    {deckStarted
+                      ? "View Next Material"
+                      : "View Mapped Materials"}
+
+                    <ArrowRight
+                      size={17}
+                    />
+
+                  </button>
+
+                </div>
+
               </div>
 
-              <h3>
-                {searchedCode}
-              </h3>
 
-              <span>
-                Material records associated with
-                this standardized code
-              </span>
+              {/* =========================================
+                  MAPPING DECK
+              ========================================= */}
 
-            </div>
+              {deckStarted && (
+
+                <div className="nmc-material-deck-section">
 
 
-            <div className="nmc-result-count">
+                  {/* =====================================
+                      DECK HEADER
+                  ===================================== */}
 
-              <Package size={17} />
+                  <div className="nmc-deck-header">
 
-              <strong>
-                {filteredMaterials.length}
-              </strong>
+                    <div>
 
-              <span>
-                {filteredMaterials.length === 1
-                  ? "material"
-                  : "materials"}
-              </span>
+                      <div className="nmc-deck-eyebrow">
 
-            </div>
+                        MAPPED MATERIALS
 
-          </div>
+                      </div>
 
+                      <h3>
+                        {searchedNMCGroup.nmcCode}
+                      </h3>
 
-          {/* =============================================
-              FILTER BAR
-          ============================================= */}
+                      <p>
+                        CPSE material records mapped
+                        to this standardized code.
+                      </p>
 
-          <div className="nmc-filter-bar">
-
-            <div className="nmc-filter-label">
-
-              <Filter size={16} />
-
-              <span>
-                Filter Results
-              </span>
-
-            </div>
+                    </div>
 
 
-            {/* CPSE FILTER */}
+                    <div className="nmc-deck-progress">
 
-            <div className="nmc-filter-control">
+                      <strong>
+                        {activeCardIndex + 1}
+                      </strong>
 
-              <Building2 size={15} />
+                      <span>
+                        /
+                        {" "}
+                        {
+                          searchedNMCGroup
+                            .mappedMaterials
+                            .length
+                        }
+                      </span>
 
-              <select
-                value={cpseFilter}
-                onChange={(event) =>
-                  setCpseFilter(
-                    event.target.value
-                  )
-                }
-              >
+                    </div>
 
-                <option>
-                  All CPSEs
-                </option>
+                  </div>
 
-                {availableCPSEs.map(
-                  (cpse) => (
 
-                    <option
-                      key={cpse}
-                      value={cpse}
+                  {/* =====================================
+                      CARD DECK
+                  ===================================== */}
+
+                  <div
+                    className="nmc-card-deck"
+                    style={{
+                      "--deck-count":
+                        searchedNMCGroup
+                          .mappedMaterials
+                          .length,
+                    }}
+                  >
+
+                    {searchedNMCGroup
+                      .mappedMaterials
+                      .map(
+                        (item, index) => {
+
+                          const position =
+                            index -
+                            activeCardIndex;
+
+
+                          const isActive =
+                            index ===
+                            activeCardIndex;
+
+
+                          if (
+                            position < 0
+                          ) {
+
+                            return null;
+
+                          }
+
+
+                          return (
+
+                            <div
+                              key={
+                                `${item.material_id}-${index}`
+                              }
+                              className={
+                                `nmc-material-card
+                                ${
+                                  isActive
+                                    ? "active"
+                                    : ""
+                                }
+                                ${
+                                  position > 0
+                                    ? "behind"
+                                    : ""
+                                }`
+                              }
+                              style={{
+                                "--card-position":
+                                  Math.min(
+                                    position,
+                                    3
+                                  ),
+                              }}
+                              onClick={
+                                isActive
+                                  ? handleCardClick
+                                  : undefined
+                              }
+                            >
+
+                              {/* CARD TOP */}
+
+                              <div className="nmc-material-card-top">
+
+                                <div className="nmc-material-card-number">
+
+                                  <span>
+                                    MATERIAL
+                                  </span>
+
+                                  <strong>
+                                    {String(
+                                      index + 1
+                                    ).padStart(
+                                      2,
+                                      "0"
+                                    )}
+                                  </strong>
+
+                                </div>
+
+
+                                <div className="nmc-material-card-cpse">
+
+                                  <Building2
+                                    size={15}
+                                  />
+
+                                  <span>
+                                    {
+                                      item.cpse_code ||
+                                      item.cpse_name ||
+                                      "CPSE"
+                                    }
+                                  </span>
+
+                                </div>
+
+                              </div>
+
+
+                              {/* CARD CONTENT */}
+
+                              <div className="nmc-material-card-content">
+
+                                <div className="nmc-material-card-code">
+
+                                  {
+                                    item.material_code ||
+                                    "—"
+                                  }
+
+                                </div>
+
+
+                                <h4>
+
+                                  {
+                                    item.material_description ||
+                                    "Material description unavailable"
+                                  }
+
+                                </h4>
+
+
+                                <div className="nmc-material-card-grid">
+
+
+                                  <div>
+
+                                    <span>
+                                      CATEGORY
+                                    </span>
+
+                                    <strong>
+                                      {
+                                        item.category ||
+                                        "—"
+                                      }
+                                    </strong>
+
+                                  </div>
+
+
+                                  <div>
+
+                                    <span>
+                                      CPSE
+                                    </span>
+
+                                    <strong>
+                                      {
+                                        item.cpse_name ||
+                                        item.cpse_code ||
+                                        "—"
+                                      }
+                                    </strong>
+
+                                  </div>
+
+
+                                  <div className="full">
+
+                                    <span>
+                                      STANDARD SPECIFICATION
+                                    </span>
+
+                                    <strong>
+                                      {
+                                        item.specification ||
+                                        item.material_description ||
+                                        "—"
+                                      }
+                                    </strong>
+
+                                  </div>
+
+                                </div>
+
+                              </div>
+
+
+                              {/* CARD FOOTER */}
+
+                              <div className="nmc-material-card-footer">
+
+                                <span>
+
+                                  {isActive
+                                    ? index ===
+                                      searchedNMCGroup
+                                        .mappedMaterials
+                                        .length -
+                                        1
+                                      ? "Final mapped material"
+                                      : "Click card to reveal next material"
+                                    : "Next"}
+
+                                </span>
+
+
+                                {isActive && (
+                                  index <
+                                  searchedNMCGroup
+                                    .mappedMaterials
+                                    .length -
+                                    1 ? (
+
+                                    <ArrowRight
+                                      size={17}
+                                    />
+
+                                  ) : (
+
+                                    <Layers3
+                                      size={17}
+                                    />
+
+                                  )
+                                )}
+
+                              </div>
+
+                            </div>
+
+                          );
+
+                        }
+                      )}
+
+                  </div>
+
+
+                  {/* =====================================
+                      DECK CONTROLS
+                  ===================================== */}
+
+                  <div className="nmc-deck-controls">
+
+                    <button
+                      type="button"
+                      className="nmc-deck-back"
+                      onClick={previousCard}
+                      disabled={
+                        activeCardIndex === 0
+                      }
                     >
-                      {cpse}
-                    </option>
 
-                  )
-                )}
+                      <ArrowLeft
+                        size={15}
+                      />
 
-              </select>
+                      Previous
 
-              <ChevronDown size={14} />
-
-            </div>
+                    </button>
 
 
-            {/* MATERIAL FILTER */}
+                    <span>
+                      Click the visible card to
+                      reveal the next material
+                    </span>
 
-            <div className="nmc-filter-control">
 
-              <Package size={15} />
-
-              <select
-                value={materialFilter}
-                onChange={(event) =>
-                  setMaterialFilter(
-                    event.target.value
-                  )
-                }
-              >
-
-                <option>
-                  All Materials
-                </option>
-
-                {availableMaterials.map(
-                  (material) => (
-
-                    <option
-                      key={material}
-                      value={material}
+                    <button
+                      type="button"
+                      className="nmc-deck-reset"
+                      onClick={resetDeck}
                     >
-                      {material}
-                    </option>
 
-                  )
-                )}
+                      <RotateCcw
+                        size={14}
+                      />
 
-              </select>
+                      Reset
 
-              <ChevronDown size={14} />
+                    </button>
 
-            </div>
+                  </div>
 
+                </div>
 
-            <button
-              className="nmc-clear-button"
-              onClick={clearFilters}
-            >
+              )}
 
-              <RotateCcw size={14} />
-
-              Clear Filters
-
-            </button>
-
-          </div>
-
-
-          {/* =============================================
-              TABLE
-          ============================================= */}
-
-          {filteredMaterials.length > 0 ? (
-
-            <div className="nmc-table-container">
-
-              <table className="nmc-table">
-
-                <thead>
-
-                  <tr>
-
-                    <th>
-                      NMC CODE
-                    </th>
-
-                    <th>
-                      MATERIAL CODE
-                    </th>
-
-                    <th>
-                      MATERIAL
-                    </th>
-
-                    <th>
-                      CATEGORY
-                    </th>
-
-                    <th>
-                      CPSE
-                    </th>
-
-                    <th>
-                      STANDARD SPECIFICATION
-                    </th>
-
-                  </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                  {filteredMaterials.map(
-                    (item, index) => (
-
-                      <tr
-                        key={`${item.material_id}-${index}`}
-                      >
-
-                        {/* NMC CODE */}
-
-                        <td>
-
-                          <span className="nmc-code-badge">
-
-                            {item.nmc_code}
-
-                          </span>
-
-                        </td>
-
-
-                        {/* ORIGINAL MATERIAL CODE */}
-
-                        <td>
-
-                          <span className="nmc-category">
-
-                            {item.material_code || "—"}
-
-                          </span>
-
-                        </td>
-
-
-                        {/* MATERIAL */}
-
-                        <td>
-
-                          <div className="nmc-material-name">
-
-                            <Package size={16} />
-
-                            <strong>
-                              {item.material_description}
-                            </strong>
-
-                          </div>
-
-                        </td>
-
-
-                        {/* CATEGORY */}
-
-                        <td>
-
-                          <span className="nmc-category">
-
-                            {item.category || "—"}
-
-                          </span>
-
-                        </td>
-
-
-                        {/* CPSE */}
-
-                        <td>
-
-                          <span className="nmc-cpse">
-
-                            {item.cpse_code}
-
-                          </span>
-
-                        </td>
-
-
-                        {/* SPECIFICATION */}
-
-                        <td>
-
-                          <span className="nmc-specification">
-
-                            {item.specification ||
-                              item.material_description ||
-                              "—"}
-
-                          </span>
-
-                        </td>
-
-                      </tr>
-
-                    )
-                  )}
-
-                </tbody>
-
-              </table>
-
-            </div>
+            </>
 
           ) : (
+
+            /* ===========================================
+               NOT FOUND
+            =========================================== */
 
             <div className="nmc-empty-state">
 
               <AlertCircle size={30} />
 
               <h3>
-                No materials found
+                NMC code not found
               </h3>
 
               <p>
-                No material matches the searched
-                NMC code and filters.
+                No mapped material group was found
+                for <strong>{searchedCode}</strong>.
               </p>
 
             </div>
@@ -933,8 +1222,8 @@ function NMCCode() {
           </h3>
 
           <p>
-            Enter an NMC code above to view
-            the associated material.
+            Enter an NMC code above to explore
+            its mapped CPSE material records.
           </p>
 
         </div>
@@ -949,3 +1238,4 @@ function NMCCode() {
 
 
 export default NMCCode;
+
