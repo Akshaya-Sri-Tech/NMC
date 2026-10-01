@@ -1,6 +1,7 @@
 # =========================
 # Environment / Secrets
 # =========================
+dist/
 .env
 .env.*
 !.env.example

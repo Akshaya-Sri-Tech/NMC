@@ -1,10 +1,10 @@
-
 const API_URL =
   import.meta.env.VITE_API_URL ||
-  "http://127.0.0.1:8001";
+  "https://sangam-in.onrender.com";
 
 const SIH_API_URL =
-  "http://127.0.0.1:8000";
+  import.meta.env.VITE_API_URL ||
+  "https://sangam-in.onrender.com";
 
 
 /* =========================================================
