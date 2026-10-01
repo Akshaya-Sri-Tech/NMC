@@ -1,0 +1,747 @@
+{
+  "terms": {
+    "mineral based hydraulic oil": {
+      "attribute": "material",
+      "canonical": "mineral based hydraulic oil",
+      "source": "ai"
+    },
+    "iso vg 46": {
+      "attribute": "viscosity_grade",
+      "canonical": "iso vg 46",
+      "source": "ai"
+    },
+    "hydraulic oil": {
+      "attribute": "product_type",
+      "canonical": "hydraulic oil",
+      "source": "ai"
+    },
+    "anti-wear formulation": {
+      "attribute": "property",
+      "canonical": "anti-wear formulation",
+      "source": "ai"
+    },
+    "mineral hydraulic fluid": {
+      "attribute": "material",
+      "canonical": "mineral hydraulic fluid",
+      "source": "ai"
+    },
+    "hydraulic fluid": {
+      "attribute": "product_type",
+      "canonical": "hydraulic fluid",
+      "source": "ai"
+    },
+    "anti-wear additives": {
+      "attribute": "property",
+      "canonical": "anti-wear additives",
+      "source": "ai"
+    },
+    "size:m20": {
+      "attribute": "size",
+      "canonical": "M20"
+    },
+    "length:80 millimetre": {
+      "attribute": "length",
+      "canonical": "80 millimetre"
+    },
+    "grade:8.8": {
+      "attribute": "grade",
+      "canonical": "8.8"
+    },
+    "thread_type:full thread": {
+      "attribute": "thread_type",
+      "canonical": "full thread"
+    },
+    "head_type:hexagonal": {
+      "attribute": "head_type",
+      "canonical": "hexagonal"
+    },
+    "thread_size:m20": {
+      "attribute": "thread_size",
+      "canonical": "M20"
+    },
+    "length:80 mm": {
+      "attribute": "length",
+      "canonical": "80 mm"
+    },
+    "material:high tensile steel": {
+      "attribute": "material",
+      "canonical": "high tensile steel"
+    },
+    "type:hex bolt": {
+      "attribute": "type",
+      "canonical": "hex bolt"
+    },
+    "material_property:high tensile": {
+      "attribute": "material_property",
+      "canonical": "high tensile"
+    },
+    "size:2 inch": {
+      "attribute": "size",
+      "canonical": "2 inch"
+    },
+    "body_material:stainless steel 304": {
+      "attribute": "body_material",
+      "canonical": "stainless steel 304"
+    },
+    "flange_rating:300#": {
+      "attribute": "flange_rating",
+      "canonical": "300#"
+    },
+    "connection_type:rf flanged": {
+      "attribute": "connection_type",
+      "canonical": "rf flanged"
+    },
+    "face_type:raised face": {
+      "attribute": "face_type",
+      "canonical": "raised face"
+    },
+    "size:4 inch": {
+      "attribute": "size",
+      "canonical": "4 inch"
+    },
+    "schedule:40": {
+      "attribute": "schedule",
+      "canonical": "40"
+    },
+    "standard:astm a106": {
+      "attribute": "standard",
+      "canonical": "ASTM A106"
+    },
+    "grade:b": {
+      "attribute": "grade",
+      "canonical": "B"
+    },
+    "manufacturing_process:seamless": {
+      "attribute": "manufacturing_process",
+      "canonical": "seamless"
+    },
+    "nominal_size:100 millimetre": {
+      "attribute": "nominal_size",
+      "canonical": "100 millimetre"
+    },
+    "material:carbon steel": {
+      "attribute": "material",
+      "canonical": "Carbon Steel"
+    },
+    "size:m20 x 80": {
+      "attribute": "size",
+      "canonical": "M20 x 80"
+    },
+    "material_type:high tensile": {
+      "attribute": "material_type",
+      "canonical": "high tensile"
+    },
+    "body_material:ss304": {
+      "attribute": "body_material",
+      "canonical": "SS304"
+    },
+    "end_type:rf flanged": {
+      "attribute": "end_type",
+      "canonical": "RF flanged"
+    },
+    "flange_type:rf": {
+      "attribute": "flange_type",
+      "canonical": "RF"
+    },
+    "flange_rating:class 300": {
+      "attribute": "flange_rating",
+      "canonical": "class 300"
+    },
+    "pressure_class:300": {
+      "attribute": "pressure_class",
+      "canonical": "300"
+    },
+    "connection_type:rf": {
+      "attribute": "connection_type",
+      "canonical": "rf"
+    },
+    "cores:3": {
+      "attribute": "cores",
+      "canonical": "3"
+    },
+    "cross_section_area:240 square millimetre": {
+      "attribute": "cross_section_area",
+      "canonical": "240 square millimetre"
+    },
+    "insulation_material:xlpe": {
+      "attribute": "insulation_material",
+      "canonical": "XLPE"
+    },
+    "conductor_material:aluminium": {
+      "attribute": "conductor_material",
+      "canonical": "aluminium"
+    },
+    "voltage_rating:11 kilovolt": {
+      "attribute": "voltage_rating",
+      "canonical": "11 kilovolt"
+    },
+    "armoured:armoured": {
+      "attribute": "armoured",
+      "canonical": "armoured"
+    },
+    "voltage:11 kilovolt": {
+      "attribute": "voltage",
+      "canonical": "11 kilovolt"
+    },
+    "insulation:xlpe": {
+      "attribute": "insulation",
+      "canonical": "XLPE"
+    },
+    "core_count:3": {
+      "attribute": "core_count",
+      "canonical": "3"
+    },
+    "armour:armoured": {
+      "attribute": "armour",
+      "canonical": "armoured"
+    },
+    "diameter:m20": {
+      "attribute": "diameter",
+      "canonical": "M20"
+    },
+    "length:100 mm": {
+      "attribute": "length",
+      "canonical": "100 mm"
+    },
+    "body_material:stainless steel 316": {
+      "attribute": "body_material",
+      "canonical": "stainless steel 316"
+    },
+    "material:stainless steel": {
+      "attribute": "material",
+      "canonical": "stainless steel"
+    },
+    "standard:astm a312": {
+      "attribute": "standard",
+      "canonical": "ASTM A312"
+    },
+    "grade:tp316": {
+      "attribute": "grade",
+      "canonical": "TP316"
+    },
+    "body_material:wcb": {
+      "attribute": "body_material",
+      "canonical": "WCB"
+    },
+    "conductor_cross_section:240 square millimetre": {
+      "attribute": "conductor_cross_section",
+      "canonical": "240 square millimetre"
+    },
+    "bearing_type:deep groove ball bearing": {
+      "attribute": "bearing_type",
+      "canonical": "deep groove ball bearing"
+    },
+    "model:6205-2rs": {
+      "attribute": "model",
+      "canonical": "6205-2rs"
+    },
+    "dimensions:25 x 52 x 15 millimetre": {
+      "attribute": "dimensions",
+      "canonical": "25 x 52 x 15 millimetre"
+    },
+    "material:chrome steel": {
+      "attribute": "material",
+      "canonical": "chrome steel"
+    },
+    "sealing:sealed": {
+      "attribute": "sealing",
+      "canonical": "sealed"
+    },
+    "flange_rating_2:class 600": {
+      "attribute": "flange_rating_2",
+      "canonical": "class 600"
+    },
+    "type:hexagonal": {
+      "attribute": "type",
+      "canonical": "hexagonal"
+    },
+    "material_grade:2062 e250": {
+      "attribute": "material_grade",
+      "canonical": "2062 E250"
+    },
+    "thickness:10 mm": {
+      "attribute": "thickness",
+      "canonical": "10 mm"
+    },
+    "width:1500 mm": {
+      "attribute": "width",
+      "canonical": "1500 mm"
+    },
+    "length:6000 mm": {
+      "attribute": "length",
+      "canonical": "6000 mm"
+    },
+    "material_type:carbon steel": {
+      "attribute": "material_type",
+      "canonical": "carbon steel"
+    },
+    "material_grade:2062 e350": {
+      "attribute": "material_grade",
+      "canonical": "2062 E350"
+    },
+    "viscosity_grade:iso vg 46": {
+      "attribute": "viscosity_grade",
+      "canonical": "ISO VG 46"
+    },
+    "base_type:mineral based": {
+      "attribute": "base_type",
+      "canonical": "mineral based"
+    },
+    "formulation:anti-wear": {
+      "attribute": "formulation",
+      "canonical": "anti-wear"
+    },
+    "fluid_type:mineral hydraulic fluid": {
+      "attribute": "fluid_type",
+      "canonical": "mineral hydraulic fluid"
+    },
+    "additives:anti-wear additives": {
+      "attribute": "additives",
+      "canonical": "anti-wear additives"
+    },
+    "chemical_name:sodium hydroxide": {
+      "attribute": "chemical_name",
+      "canonical": "sodium hydroxide"
+    },
+    "formula:naoh": {
+      "attribute": "formula",
+      "canonical": "NaOH"
+    },
+    "purity:99%": {
+      "attribute": "purity",
+      "canonical": "99%"
+    },
+    "grade:industrial grade": {
+      "attribute": "grade",
+      "canonical": "industrial grade"
+    },
+    "form:flakes": {
+      "attribute": "form",
+      "canonical": "flakes"
+    },
+    "purity:minimum 98%": {
+      "attribute": "purity",
+      "canonical": "minimum 98%"
+    },
+    "grade:industrial": {
+      "attribute": "grade",
+      "canonical": "industrial"
+    },
+    "flow_rate:50 m3/hr": {
+      "attribute": "flow_rate",
+      "canonical": "50 m3/hr"
+    },
+    "head:60 m": {
+      "attribute": "head",
+      "canonical": "60 m"
+    },
+    "casing_material:stainless steel 316": {
+      "attribute": "casing_material",
+      "canonical": "stainless steel 316"
+    },
+    "motor_power:15 kilowatt": {
+      "attribute": "motor_power",
+      "canonical": "15 kilowatt"
+    },
+    "pump_type:horizontal centrifugal": {
+      "attribute": "pump_type",
+      "canonical": "horizontal centrifugal"
+    },
+    "application:water": {
+      "attribute": "application",
+      "canonical": "water"
+    },
+    "capacity:50 m3/hr": {
+      "attribute": "capacity",
+      "canonical": "50 m3/hr"
+    },
+    "total_head:60 m": {
+      "attribute": "total_head",
+      "canonical": "60 m"
+    },
+    "output_signal:4-20 ma hart": {
+      "attribute": "output_signal",
+      "canonical": "4-20 ma hart"
+    },
+    "range:0-10 bar": {
+      "attribute": "range",
+      "canonical": "0-10 bar"
+    },
+    "process_connection:1/2 inch npt": {
+      "attribute": "process_connection",
+      "canonical": "1/2 inch NPT"
+    },
+    "pressure_range:0 to 10 bar": {
+      "attribute": "pressure_range",
+      "canonical": "0 to 10 bar"
+    },
+    "hart_range:0-10 bar": {
+      "attribute": "hart_range",
+      "canonical": "0-10 bar"
+    },
+    "output_signal:4-20ma with hart protocol": {
+      "attribute": "output_signal",
+      "canonical": "4-20ma with hart protocol"
+    },
+    "connection_size:1/2 inch npt": {
+      "attribute": "connection_size",
+      "canonical": "1/2 inch npt"
+    },
+    "pressure_range:0-10 bar": {
+      "attribute": "pressure_range",
+      "canonical": "0-10 bar"
+    },
+    "output_signal:4-20 ma": {
+      "attribute": "output_signal",
+      "canonical": "4-20 ma"
+    },
+    "protocol:hart": {
+      "attribute": "protocol",
+      "canonical": "hart"
+    },
+    "electrode_type:e6013": {
+      "attribute": "electrode_type",
+      "canonical": "E6013"
+    },
+    "diameter:3.15 millimetre": {
+      "attribute": "diameter",
+      "canonical": "3.15 millimetre"
+    },
+    "standard:aws e6013": {
+      "attribute": "standard",
+      "canonical": "AWS E6013"
+    },
+    "material:mild steel": {
+      "attribute": "material",
+      "canonical": "mild steel"
+    },
+    "coating:rutile": {
+      "attribute": "coating",
+      "canonical": "rutile"
+    },
+    "classification:e6013": {
+      "attribute": "classification",
+      "canonical": "e6013"
+    },
+    "winding_material:stainless steel 316": {
+      "attribute": "winding_material",
+      "canonical": "stainless steel 316"
+    },
+    "filler_material:graphite": {
+      "attribute": "filler_material",
+      "canonical": "graphite"
+    },
+    "face_type:rf": {
+      "attribute": "face_type",
+      "canonical": "rf"
+    },
+    "bearing_type:deep groove": {
+      "attribute": "bearing_type",
+      "canonical": "deep groove"
+    },
+    "bearing_model:6205": {
+      "attribute": "bearing_model",
+      "canonical": "6205"
+    },
+    "model:6206": {
+      "attribute": "model",
+      "canonical": "6206"
+    },
+    "dimensions:30 x 62 x 16 millimetre": {
+      "attribute": "dimensions",
+      "canonical": "30 x 62 x 16 millimetre"
+    },
+    "fluid:water": {
+      "attribute": "fluid",
+      "canonical": "water"
+    },
+    "class:300#": {
+      "attribute": "class",
+      "canonical": "300#"
+    },
+    "ball_material:stainless steel 304": {
+      "attribute": "ball_material",
+      "canonical": "stainless steel 304"
+    },
+    "end_type:flanged rf": {
+      "attribute": "end_type",
+      "canonical": "flanged rf"
+    },
+    "thread_type:metric": {
+      "attribute": "thread_type",
+      "canonical": "metric"
+    },
+    "grade:a106b": {
+      "attribute": "grade",
+      "canonical": "A106B"
+    },
+    "size:100 millimetre nb": {
+      "attribute": "size",
+      "canonical": "100 millimetre nb"
+    },
+    "material:astm a106 grade b": {
+      "attribute": "material",
+      "canonical": "ASTM A106 Grade B"
+    },
+    "construction:seamless": {
+      "attribute": "construction",
+      "canonical": "seamless"
+    },
+    "face_style:rf": {
+      "attribute": "face_style",
+      "canonical": "rf"
+    },
+    "standard:asme": {
+      "attribute": "standard",
+      "canonical": "asme"
+    },
+    "size:1 inch": {
+      "attribute": "size",
+      "canonical": "1 inch"
+    },
+    "ball_material:stainless steel 316": {
+      "attribute": "ball_material",
+      "canonical": "stainless steel 316"
+    },
+    "flange_rating:class 150": {
+      "attribute": "flange_rating",
+      "canonical": "class 150"
+    },
+    "connection_type:threaded": {
+      "attribute": "connection_type",
+      "canonical": "threaded"
+    },
+    "size:3 inch": {
+      "attribute": "size",
+      "canonical": "3 inch"
+    },
+    "flange_rating:150#": {
+      "attribute": "flange_rating",
+      "canonical": "150#"
+    },
+    "body_material:carbon steel": {
+      "attribute": "body_material",
+      "canonical": "carbon steel"
+    },
+    "end_connection:flanged rf": {
+      "attribute": "end_connection",
+      "canonical": "flanged rf"
+    },
+    "grade:8": {
+      "attribute": "grade",
+      "canonical": "8"
+    },
+    "coating:zinc": {
+      "attribute": "coating",
+      "canonical": "zinc"
+    },
+    "type:hex nut": {
+      "attribute": "type",
+      "canonical": "hex nut"
+    },
+    "thread_size:m16": {
+      "attribute": "thread_size",
+      "canonical": "M16"
+    },
+    "length:60 mm": {
+      "attribute": "length",
+      "canonical": "60 mm"
+    },
+    "connection_type:flanged rf": {
+      "attribute": "connection_type",
+      "canonical": "flanged rf"
+    },
+    "angle:90 degree": {
+      "attribute": "angle",
+      "canonical": "90 degree"
+    },
+    "material_standard:astm a234 wpb": {
+      "attribute": "material_standard",
+      "canonical": "ASTM A234 WPB"
+    },
+    "connection_type:butt weld": {
+      "attribute": "connection_type",
+      "canonical": "butt weld"
+    },
+    "size:50 millimetre nb": {
+      "attribute": "size",
+      "canonical": "50 millimetre nb"
+    },
+    "type:seamless": {
+      "attribute": "type",
+      "canonical": "seamless"
+    },
+    "flow_rate:30 m3/hr": {
+      "attribute": "flow_rate",
+      "canonical": "30 m3/hr"
+    },
+    "head:45 m": {
+      "attribute": "head",
+      "canonical": "45 m"
+    },
+    "motor_power:11 kilowatt": {
+      "attribute": "motor_power",
+      "canonical": "11 kilowatt"
+    },
+    "signal_output:4-20ma": {
+      "attribute": "signal_output",
+      "canonical": "4-20mA"
+    },
+    "sensor_type:rtd": {
+      "attribute": "sensor_type",
+      "canonical": "RTD"
+    },
+    "mounting:head mounted": {
+      "attribute": "mounting",
+      "canonical": "head mounted"
+    },
+    "application:industrial service": {
+      "attribute": "application",
+      "canonical": "industrial service"
+    },
+    "output_signal:4-20ma hart": {
+      "attribute": "output_signal",
+      "canonical": "4-20mA HART"
+    },
+    "range:0-16 bar": {
+      "attribute": "range",
+      "canonical": "0-16 bar"
+    },
+    "cross_sectional_area:300 square millimetre": {
+      "attribute": "cross_sectional_area",
+      "canonical": "300 square millimetre"
+    },
+    "voltage_rating:33 kilovolt": {
+      "attribute": "voltage_rating",
+      "canonical": "33 kilovolt"
+    },
+    "core_count:1": {
+      "attribute": "core_count",
+      "canonical": "1"
+    },
+    "cross_section_area:120 square millimetre": {
+      "attribute": "cross_section_area",
+      "canonical": "120 square millimetre"
+    },
+    "armouring:armoured": {
+      "attribute": "armouring",
+      "canonical": "armoured"
+    },
+    "size:6 inch": {
+      "attribute": "size",
+      "canonical": "6 inch"
+    },
+    "filtration_rating:10 micron": {
+      "attribute": "filtration_rating",
+      "canonical": "10 micron"
+    },
+    "length:20 inch": {
+      "attribute": "length",
+      "canonical": "20 inch"
+    },
+    "element_material:polypropylene": {
+      "attribute": "element_material",
+      "canonical": "polypropylene"
+    },
+    "body_material:ductile iron": {
+      "attribute": "body_material",
+      "canonical": "ductile iron"
+    },
+    "disc_material:stainless steel 316": {
+      "attribute": "disc_material",
+      "canonical": "stainless steel 316"
+    },
+    "connection_type:wafer type": {
+      "attribute": "connection_type",
+      "canonical": "wafer type"
+    },
+    "pump_type:centrifugal": {
+      "attribute": "pump_type",
+      "canonical": "centrifugal"
+    },
+    "flow_rate:20 m3/hr": {
+      "attribute": "flow_rate",
+      "canonical": "20 m3/hr"
+    },
+    "head:30 m": {
+      "attribute": "head",
+      "canonical": "30 m"
+    },
+    "casing_material:stainless steel 304": {
+      "attribute": "casing_material",
+      "canonical": "stainless steel 304"
+    },
+    "motor_power:7.5 kilowatt": {
+      "attribute": "motor_power",
+      "canonical": "7.5 kilowatt"
+    },
+    "valve_type:swing check": {
+      "attribute": "valve_type",
+      "canonical": "swing check"
+    },
+    "schedule:80": {
+      "attribute": "schedule",
+      "canonical": "80"
+    },
+    "material:seamless carbon steel": {
+      "attribute": "material",
+      "canonical": "seamless carbon steel"
+    },
+    "size:m24": {
+      "attribute": "size",
+      "canonical": "M24"
+    },
+    "grade:10": {
+      "attribute": "grade",
+      "canonical": "10"
+    },
+    "material:alloy steel": {
+      "attribute": "material",
+      "canonical": "alloy steel"
+    },
+    "type:heavy hex nut": {
+      "attribute": "type",
+      "canonical": "heavy hex nut"
+    },
+    "thread_size:m24": {
+      "attribute": "thread_size",
+      "canonical": "M24"
+    },
+    "length:120 mm": {
+      "attribute": "length",
+      "canonical": "120 mm"
+    },
+    "grade:10.9": {
+      "attribute": "grade",
+      "canonical": "10.9"
+    },
+    "type:stud bolt": {
+      "attribute": "type",
+      "canonical": "stud bolt"
+    },
+    "threading:threaded": {
+      "attribute": "threading",
+      "canonical": "threaded"
+    },
+    "screen_material:stainless steel": {
+      "attribute": "screen_material",
+      "canonical": "stainless steel"
+    },
+    "end_connection:flanged": {
+      "attribute": "end_connection",
+      "canonical": "flanged"
+    },
+    "pressure_range:0-40 bar": {
+      "attribute": "pressure_range",
+      "canonical": "0-40 bar"
+    },
+    "standard:api 5l": {
+      "attribute": "standard",
+      "canonical": "API 5L"
+    },
+    "type:wafer": {
+      "attribute": "type",
+      "canonical": "wafer"
+    }
+  }
+}
