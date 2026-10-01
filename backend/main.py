@@ -19,7 +19,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://sangamin.vercel.app/"
+        "https://sangamin.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
