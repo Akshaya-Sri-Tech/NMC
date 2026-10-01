@@ -1,12 +1,8 @@
 
 import os
-
-
-
 import json
-
+import re
 import requests
-
 from typing import Any, Dict, Optional
 
 from dotenv import load_dotenv

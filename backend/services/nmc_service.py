@@ -1,4 +1,4 @@
-from database.connection import supabase
+from backend.database.connection import supabase
 
 
 def resolve_material_uuid(pipeline_material_id: str):

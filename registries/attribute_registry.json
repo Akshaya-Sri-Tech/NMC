@@ -121,7 +121,7 @@
     },
     "material:carbon steel": {
       "attribute": "material",
-      "canonical": "carbon steel"
+      "canonical": "Carbon Steel"
     },
     "size:m20 x 80": {
       "attribute": "size",
@@ -738,6 +738,10 @@
     "standard:api 5l": {
       "attribute": "standard",
       "canonical": "API 5L"
+    },
+    "type:wafer": {
+      "attribute": "type",
+      "canonical": "wafer"
     }
   }
 }

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from database.connection import supabase
+from backend.database.connection import supabase
 import csv
 import io
 

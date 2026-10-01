@@ -1,2 +1,60 @@
+# =========================
+# Environment / Secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Python
+# =========================
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# =========================
+# Virtual environments
+# =========================
+.venv/
+venv/
+env/
+ENV/
+
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Generated output
+# =========================
+output/*
+!output/.gitkeep
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# Testing / Coverage
+# =========================
+.pytest_cache/
+.coverage
+htmlcov/
+.coverage.*
+coverage.xml
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Temporary files
+# =========================
+*.tmp
+*.temp
+*.swp

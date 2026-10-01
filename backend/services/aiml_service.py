@@ -1,21 +1,37 @@
-import json
-import os
+from pathlib import Path
 import importlib.util
+import json
 
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SRC_DIR = os.path.join(BASE_DIR, "src")
+# ============================================================
+# PROJECT PATHS
+# ============================================================
 
+# aiml_service.py
+#     ↓
+# backend/
+#     ↓
+# SIH_99/
+BASE_DIR = Path(__file__).resolve().parents[2]
+
+# Actual AI/ML pipeline folder:
+# SIH_99/src/
+SRC_DIR = BASE_DIR / "ml_pipeline"
+
+
+# ============================================================
+# LOAD AI/ML MODULE
+# ============================================================
 
 def load_module(filename):
 
-    path = os.path.join(SRC_DIR, filename)
+    path = SRC_DIR / filename
 
     module_name = filename.replace(".py", "").replace("-", "_")
 
     spec = importlib.util.spec_from_file_location(
         module_name,
-        path
+        str(path)
     )
 
     if spec is None or spec.loader is None:
@@ -23,20 +39,22 @@ def load_module(filename):
             f"Could not load module: {filename}"
         )
 
-    module = importlib.util.module_from_spec(
-        spec
-    )
+    module = importlib.util.module_from_spec(spec)
 
     spec.loader.exec_module(module)
 
     return module
 
 
-def run_pipeline(records):
+# ============================================================
+# MAIN AI/ML PIPELINE
+# ============================================================
 
-    # ============================================================
+def standardize_materials(records):
+
+    # ========================================================
     # STEP 1: LOAD PIPELINE MODULES
-    # ============================================================
+    # ========================================================
 
     ingestion = load_module("00_ingestion.py")
     cleaning = load_module("01_cleaning.py")
@@ -45,27 +63,27 @@ def run_pipeline(records):
     dqc = load_module("04_data_quality.py")
     matching = load_module("05_matching.py")
 
-    # ============================================================
+    # ========================================================
     # STEP 2: INGEST RECEIVED JSON
-    # ============================================================
+    # ========================================================
 
     df = ingestion.ingest_records(records)
 
-    # ============================================================
+    # ========================================================
     # STEP 3: CLEANING
-    # ============================================================
+    # ========================================================
 
     df = cleaning.clean_dataframe(df)
 
-    # ============================================================
+    # ========================================================
     # STEP 4: NORMALIZATION
-    # ============================================================
+    # ========================================================
 
     df = normalization.normalize_dataframe(df)
 
-    # ============================================================
+    # ========================================================
     # STEP 5: ATTRIBUTE EXTRACTION + DQC
-    # ============================================================
+    # ========================================================
 
     final_json = []
 
@@ -86,26 +104,26 @@ def run_pipeline(records):
             f"{normalized_specification}"
         ).strip()
 
-        # --------------------------------------------------------
+        # ----------------------------------------------------
         # ATTRIBUTE EXTRACTION
-        # --------------------------------------------------------
+        # ----------------------------------------------------
 
         extracted_attributes = extraction.extract(
             extraction_text
         )
 
-        # --------------------------------------------------------
-        # DATA QUALITY CORRECTION
-        # --------------------------------------------------------
+        # ----------------------------------------------------
+        # DATA QUALITY CHECK
+        # ----------------------------------------------------
 
         extracted_attributes = dqc.dqc_attributes(
             extracted_attributes,
             normalized_specification
         )
 
-        # --------------------------------------------------------
-        # RAW METADATA
-        # --------------------------------------------------------
+        # ----------------------------------------------------
+        # RAW MATERIAL INFORMATION
+        # ----------------------------------------------------
 
         raw = records[index]
 
@@ -137,16 +155,19 @@ def run_pipeline(records):
             ),
 
             "extracted_attributes": extracted_attributes
-
         })
 
-    # ============================================================
+    # ========================================================
     # STEP 6: SPLINK MATCHING
-    # ============================================================
+    # ========================================================
 
     matching_results = matching.run_splink_pipeline(
         final_json
     )
+
+    # ========================================================
+    # DEBUG OUTPUT
+    # ========================================================
 
     print(
         json.dumps(
@@ -156,37 +177,11 @@ def run_pipeline(records):
         )
     )
 
-    # ============================================================
-    # STEP 7: RETURN FINAL OUTPUT
-    # ============================================================
+    # ========================================================
+    # STEP 7: RETURN RESULT
+    # ========================================================
 
     if matching_results is None:
         return []
 
     return matching_results
-
-
-def main():
-
-    # ============================================================
-    # LOCAL TEST ONLY
-    # ============================================================
-
-    ingestion = load_module("00_ingestion.py")
-
-    raw_records = ingestion.load_sample_json()
-
-    result = run_pipeline(raw_records)
-
-    print(
-        json.dumps(
-            result,
-            indent=2
-        )
-    )
-
-    print("Matching and decision layer completed.")
-
-
-if __name__ == "__main__":
-    main()

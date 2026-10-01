@@ -33,10 +33,7 @@ def run(result):
     # --------------------------------------------------------
     # Prepare LEFT record
     # --------------------------------------------------------
-    print(
-    "\n>>> ENTERED HUMAN EVALUATION <<<",
-    flush=True
-    )
+    
     left_record = {
         "product_id": result.get(
             "left_product_id"
@@ -738,18 +735,6 @@ RECORD B
         response.raise_for_status()
 
         backend_result = response.json()
-
-        print(
-            "\n>>> HUMAN EVALUATION SENT TO BACKEND <<<",
-            flush=True
-        )
-
-        print(
-            json.dumps(
-                backend_result,
-                indent=4
-            )
-        )
 
     except requests.RequestException as error:
 

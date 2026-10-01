@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
-from database.connection import supabase
-from services.aiml_service import standardize_materials
-import requests
+
+from backend.database.connection import supabase
+from backend.services.aiml_service import standardize_materials
 
 
 router = APIRouter(
@@ -11,7 +11,7 @@ router = APIRouter(
 
 
 # ------------------------------------------------
-# TEST AI/ML CONNECTION
+# TEST AI/ML
 # ------------------------------------------------
 
 @router.post("/test-aiml")
@@ -25,7 +25,7 @@ def test_aiml():
         .execute()
     )
 
-    materials = materials_response.data
+    materials = materials_response.data or []
 
     if not materials:
         raise HTTPException(
@@ -40,16 +40,10 @@ def test_aiml():
         )
 
         return {
-            "message": "AI/ML API connection successful!",
-            "aiml_response": result
+            "message": "AI/ML processing successful!",
+            "aiml_response": result,
+            "records_processed": len(materials)
         }
-
-    except requests.exceptions.RequestException as error:
-
-        raise HTTPException(
-            status_code=502,
-            detail=f"AI/ML API request failed: {str(error)}"
-        )
 
     except Exception as error:
 
@@ -73,7 +67,7 @@ def get_materials_for_aiml():
         .execute()
     )
 
-    return response.data
+    return response.data or []
 
 
 # ------------------------------------------------
@@ -83,7 +77,7 @@ def get_materials_for_aiml():
 @router.post("/run-aiml")
 def run_aiml():
 
-    # 1. Get combined material + CPSE data
+    # 1. Get material + CPSE data
 
     response = (
         supabase
@@ -92,7 +86,7 @@ def run_aiml():
         .execute()
     )
 
-    materials = response.data
+    materials = response.data or []
 
     if not materials:
         raise HTTPException(
@@ -100,31 +94,25 @@ def run_aiml():
             detail="No material records found."
         )
 
-    # 2. Send materials to AI/ML API
+    # 2. Run AI/ML pipeline locally
 
     try:
 
-        aiml_response = requests.post(
-            "http://127.0.0.1:8001/standardize",
-            json={
-                "materials": materials
-            },
-            timeout=120
+        result = standardize_materials(
+            materials
         )
 
-        aiml_response.raise_for_status()
-
-    except requests.RequestException as error:
+    except Exception as error:
 
         raise HTTPException(
             status_code=500,
-            detail=f"AI/ML API request failed: {error}"
+            detail=str(error)
         )
 
     # 3. Return AI/ML result
 
     return {
         "message": "AI/ML processing successful!",
-        "aiml_response": aiml_response.json(),
+        "aiml_response": result,
         "records_sent_to_aiml": len(materials)
     }

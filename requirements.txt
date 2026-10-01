@@ -1,5 +1,8 @@
 fastapi
 uvicorn[standard]
 supabase
-requests
 python-dotenv
+pandas
+requests
+splink
+duckdb
