@@ -7,3 +7,4 @@ requests
 splink
 duckdb
 python-multipart
+groq
