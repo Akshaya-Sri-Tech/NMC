@@ -7,21 +7,56 @@ const API_URL =
    AI / ML BACKEND
    ========================================================= */
 
+/**
+ * Get sample materials from backend.
+ *
+ * Backend may return either:
+ *   [...]
+ * or:
+ *   { materials: [...] }
+ *
+ * This function normalizes both formats into:
+ *   { materials: [...] }
+ */
 export async function getSampleMaterials() {
   const response = await fetch(
     `${API_URL}/api/materials-for-aiml`
   );
 
   if (!response.ok) {
+    const error = await response.text();
+
     throw new Error(
-      "Failed to load materials"
+      error || "Failed to load materials"
     );
   }
 
-  return response.json();
+  const data = await response.json();
+
+  // Backend returns an array
+  if (Array.isArray(data)) {
+    return {
+      materials: data,
+    };
+  }
+
+  // Backend returns { materials: [...] }
+  if (data && Array.isArray(data.materials)) {
+    return {
+      materials: data.materials,
+    };
+  }
+
+  // Unexpected response
+  return {
+    materials: [],
+  };
 }
 
 
+/**
+ * Run the AI/ML standardization pipeline.
+ */
 export async function standardizeMaterials() {
   const response = await fetch(
     `${API_URL}/api/run-aiml`,
@@ -46,14 +81,19 @@ export async function standardizeMaterials() {
    HUMAN EVALUATION
    ========================================================= */
 
+/**
+ * Get all human evaluations.
+ */
 export async function getHumanEvaluations() {
   const response = await fetch(
     `${API_URL}/api/human-evaluations`
   );
 
   if (!response.ok) {
+    const error = await response.text();
+
     throw new Error(
-      "Failed to load human evaluations"
+      error || "Failed to load human evaluations"
     );
   }
 
@@ -65,6 +105,9 @@ export async function getHumanEvaluations() {
    CREATE HUMAN EVALUATION
    ========================================================= */
 
+/**
+ * Create a new human evaluation.
+ */
 export async function createHumanEvaluation(
   evaluation
 ) {
@@ -97,6 +140,9 @@ export async function createHumanEvaluation(
    UPDATE HUMAN EVALUATION
    ========================================================= */
 
+/**
+ * Update the human decision for an evaluation.
+ */
 export async function updateHumanEvaluation(
   evaluationId,
   humanDecision
@@ -130,17 +176,22 @@ export async function updateHumanEvaluation(
 
 
 /* =========================================================
-   GET NMC MAPPINGS
+   NMC MAPPINGS
    ========================================================= */
 
+/**
+ * Get NMC mappings.
+ */
 export async function getNmcMappings() {
   const response = await fetch(
     `${API_URL}/api/nmc/mapping`
   );
 
   if (!response.ok) {
+    const error = await response.text();
+
     throw new Error(
-      "Failed to load NMC mappings"
+      error || "Failed to load NMC mappings"
     );
   }
 
